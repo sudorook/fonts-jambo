@@ -9,7 +9,7 @@ DENSITY=300
 VARIANTS=(R RI B BI)
 
 for VARIANT in "${VARIANTS[@]}"; do
-  JAMBO=../fonts/ttf/JamboMono-"${VARIANT}".ttf
+  JAMBO=../ttf/JamboMono-"${VARIANT}".ttf
   UBUNTU=UbuntuMono-"${VARIANT}".ttf
 
   echo "Building comparison: ${VARIANT@Q}."
