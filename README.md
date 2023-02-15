@@ -1,7 +1,8 @@
 # Jambo Mono Fonts
 
-Slightly tweaked Ubuntu Mono fonts. They are merely intended as fixes to
-several slight flaws in the original and not as a new font project.
+Slightly tweaked Ubuntu Mono fonts patched with the Nerd Fonts icon set. They
+are merely intended as fixes to several slight flaws in the original and not as
+a new font project.
 
 ## Alterations
 
@@ -30,8 +31,12 @@ Comparison with original below ('red' is original Ubuntu, 'cyan' is Jambo):
 
 ## Available styles
 
-1. JamboMono-{R,RI,B,BI}.ttf - TrueType variants
-2. JamboMono-{R,RI,B,BI}.otf - OpenType font with hinting metadata
+1. JamboMono-{R,RI,B,BI}.ttf - TrueType variants (no Nerd symbolic fonts)
+2. JamboMono-{R,RI,B,BI}.otf - OpenType font with hinting metadata (no Nerd symbolic fonts)
+3. JamboMonoNerd-{R,RI,B,BI}.ttf - TrueType with Nerd symbolic fonts
+4. JamboMonoNerd-{R,RI,B,BI}.otf - OpenType with Nerd symbolic fonts
+5. JamboMonoNerd-{R,RI,B,BI}-WC.ttf - TrueType with Nerd symbolic fonts (Windows-compatible)
+6. JamboMonoNerd-{R,RI,B,BI}-WC.otf - OpenType with Nerd symbolic fonts (Windows-compatible)
 
 ## Installation
 
