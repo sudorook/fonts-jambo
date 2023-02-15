@@ -49,6 +49,16 @@ the user is root or not. Run:
 ./install
 ```
 
+## Usage
+
+The non-Nerd Jambo fonts use the family name `Jambo Mono`, with each file
+corresponding to `Regular`, `Bold`, `Italic`, and `Bold Italic` styles.
+
+The Nerd-patched versions are instead named `JamboMono Nerd Font`. This is the
+default name set by the`font-patcher` script found in the [Nerd fonts
+repository](https://github.com/ryanoasis/nerd-fonts).
+
+
 ## Building
 
 All changes were made using Font Lab 8, including the hinting. The \*.vfc files
