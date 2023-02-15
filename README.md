@@ -41,3 +41,8 @@ is root or not. Simply run:
 ```bash
 ./install
 ```
+
+## Building
+
+All changes were made using Font Lab 8, including the hinting. The \*vfc file
+are available in the 'src/' directory.
