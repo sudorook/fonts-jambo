@@ -18,6 +18,16 @@ several slight flaws in the original and not as a new font project.
 
 The changes are very small.
 
+Comparison with original below ('red' is original Ubuntu, 'cyan' is Jambo):
+
+![Regular](res/comparison-R.png)
+
+![Italic](res/comparison-RI.png)
+
+![Bold](res/comparison-B.png)
+
+![Bold Italic](res/comparison-BI.png)
+
 ## Available styles
 
 1. JamboMono-{R,RI,B,BI}.ttf - TrueType variants
