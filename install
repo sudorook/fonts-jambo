@@ -1,0 +1,10 @@
+#! /bin/bash
+set -eu
+
+if [ "${EUID}" -eq 0 ]; then
+  sudo mkdir -p /usr/local/share/fonts/jambo
+  sudo cp -Ra fonts/{ttf,otf} /usr/local/share/fonts/jambo
+else
+  mkdir -p "${HOME}/.local/share/fonts/jambo"
+  cp -Ra fonts/{ttf,otf} "${HOME}/.local/share/fonts/jambo"
+fi
