@@ -23,8 +23,8 @@ for VARIANT in "${VARIANTS[@]}"; do
   magick "UbuntuMono-${VARIANT}.png" "JamboMono-${VARIANT}.png" \
     -compose multiply -composite comparison-large-"${VARIANT}".png
 
-  mkdir -p "${DIR}"/../res/
-  magick comparison-large-"${VARIANT}".png -resize 25% "${DIR}"/../res/comparison-"${VARIANT}".png
+  mkdir -p "${DIR}"/../assets/
+  magick comparison-large-"${VARIANT}".png -resize 25% "${DIR}"/../assets/comparison-"${VARIANT}".png
 
   rm "JamboMono-${VARIANT}.png" "UbuntuMono-${VARIANT}.png" comparison-large-"${VARIANT}".png
 done

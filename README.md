@@ -20,13 +20,13 @@ The changes are very small.
 
 Comparison with original below ('red' is original Ubuntu, 'cyan' is Jambo):
 
-![Regular](res/comparison-R.png)
+![Regular](assets/comparison-R.png)
 
-![Italic](res/comparison-RI.png)
+![Italic](assets/comparison-RI.png)
 
-![Bold](res/comparison-B.png)
+![Bold](assets/comparison-B.png)
 
-![Bold Italic](res/comparison-BI.png)
+![Bold Italic](assets/comparison-BI.png)
 
 ## Available styles
 
