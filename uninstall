@@ -1,0 +1,10 @@
+#! /bin/bash
+set -eu
+
+if [ "${EUID}" -eq 0 ]; then
+  rm -r /usr/local/share/fonts/jambo/{ttf,otf}
+  rmdir /usr/local/share/fonts/jambo
+else
+  rm -r "${HOME}"/.local/share/fonts/jambo/{ttf,otf} 
+  rmdir "${HOME}"/.local/share/fonts/jambo
+fi
