@@ -1,0 +1,69 @@
+[buildPlans.jambo-mono-tall]
+family = "Jambo Mono"
+spacing = "normal"
+serifs = "sans"
+no-cv-ss = false
+export-glyph-names = true
+
+  [buildPlans.jambo-mono-tall.variants]
+  inherits = "ss12"
+
+    [buildPlans.jambo-mono-tall.variants.design]
+    f = "serifless-crossbar-at-x-height"
+    t = "flat-hook"
+    zero = "slashed"
+    six = "closed-contour"
+    # seven = "bend-crossbar"
+    eight = "crossing"
+    nine = "closed-contour"
+    brace = "curly"
+    dollar = "through"
+    cent = "through"
+
+[buildPlans.jambo-mono-tall.widths.normal]
+shape = 600
+menu = 5
+css = "normal"
+
+[buildPlans.jambo-mono-tall.metric-override]
+symbolMid = 295 # 340
+cap = 710 # 735
+ascender = 745 # 735
+leading = 1210 # 1250
+xHeight = 530 # 520
+parenSize = 1016 # 966
+
+[buildPlans.jambo-mono]
+family = "Jambo Mono"
+spacing = "normal"
+serifs = "sans"
+no-cv-ss = false
+export-glyph-names = true
+
+  [buildPlans.jambo-mono.variants]
+  inherits = "ss12"
+
+    [buildPlans.jambo-mono.variants.design]
+    f = "serifless-crossbar-at-x-height"
+    t = "flat-hook"
+    zero = "slashed"
+    six = "closed-contour"
+    # seven = "bend-crossbar"
+    eight = "crossing"
+    nine = "closed-contour"
+    brace = "curly"
+    dollar = "through"
+    cent = "through"
+
+[buildPlans.jambo-mono.widths.normal]
+shape = 600
+menu = 5
+css = "normal"
+
+[buildPlans.jambo-mono.metric-override]
+symbolMid = 295 # 340
+cap = 700 # 735
+ascender = 735 # 735
+leading = 1210 # 1250
+xHeight = 530 # 520
+parenSize = 916 # 966

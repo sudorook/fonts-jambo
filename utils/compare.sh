@@ -3,28 +3,42 @@ set -eu
 
 DIR="$(dirname "${0}")"
 SAMPLE="ascii.txt"
-SIZE=100
 DENSITY=300
+JSIZE=91
+USIZE=109
 
-VARIANTS=(R RI B BI)
+# Regular
+magick +antialias -density "${DENSITY}" -fill turquoise -font ../ttf/jambo-mono-regular.ttf \
+  -pointsize "${JSIZE}" label:@"${SAMPLE}" jambo.png
+magick +antialias -density "${DENSITY}" -fill coral -font UbuntuMono-R.ttf \
+  -pointsize "${USIZE}" label:@"${SAMPLE}" ubuntu.png
+magick ubuntu.png jambo.png -compose multiply -composite comparison-large.png
+magick comparison-large.png -resize 25% "${DIR}"/../assets/comparison-R.png
 
-for VARIANT in "${VARIANTS[@]}"; do
-  JAMBO=../ttf/JamboMono-"${VARIANT}".ttf
-  UBUNTU=UbuntuMono-"${VARIANT}".ttf
+# Bold
+magick +antialias -density "${DENSITY}" -fill turquoise -font ../ttf/jambo-mono-bold.ttf \
+  -pointsize "${JSIZE}" label:@"${SAMPLE}" jambo.png
+magick +antialias -density "${DENSITY}" -fill coral -font UbuntuMono-B.ttf \
+  -pointsize "${USIZE}" label:@"${SAMPLE}" ubuntu.png
+magick ubuntu.png jambo.png -compose multiply -composite comparison-large.png
+magick comparison-large.png -resize 25% "${DIR}"/../assets/comparison-B.png
 
-  echo "Building comparison: ${VARIANT@Q}."
+# Italic
+magick +antialias -density "${DENSITY}" -fill turquoise -font ../ttf/jambo-mono-italic.ttf \
+  -pointsize "${JSIZE}" label:@"${SAMPLE}" jambo.png
+magick +antialias -density "${DENSITY}" -fill coral -font UbuntuMono-RI.ttf \
+  -pointsize "${USIZE}" label:@"${SAMPLE}" ubuntu.png
+magick ubuntu.png jambo.png -compose multiply -composite comparison-large.png
+magick comparison-large.png -resize 25% "${DIR}"/../assets/comparison-RI.png
 
-  magick +antialias -density "${DENSITY}" -fill red \
-    -font "${UBUNTU}" -pointsize "${SIZE}" label:@"${SAMPLE}" "UbuntuMono-${VARIANT}.png"
+# Bold Italic
+magick +antialias -density "${DENSITY}" -fill turquoise -font ../ttf/jambo-mono-bolditalic.ttf \
+  -pointsize "${JSIZE}" label:@"${SAMPLE}" jambo.png
+magick +antialias -density "${DENSITY}" -fill coral -font UbuntuMono-BI.ttf \
+  -pointsize "${USIZE}" label:@"${SAMPLE}" ubuntu.png
+magick ubuntu.png jambo.png -compose multiply -composite comparison-large.png
+magick comparison-large.png -resize 25% "${DIR}"/../assets/comparison-BI.png
 
-  magick +antialias -density "${DENSITY}" -fill cyan \
-    -font "${JAMBO}" -pointsize "${SIZE}" label:@"${SAMPLE}" "JamboMono-${VARIANT}.png"
-
-  magick "UbuntuMono-${VARIANT}.png" "JamboMono-${VARIANT}.png" \
-    -compose multiply -composite comparison-large-"${VARIANT}".png
-
-  mkdir -p "${DIR}"/../assets/
-  magick comparison-large-"${VARIANT}".png -resize 25% "${DIR}"/../assets/comparison-"${VARIANT}".png
-
-  rm "JamboMono-${VARIANT}.png" "UbuntuMono-${VARIANT}.png" comparison-large-"${VARIANT}".png
-done
+rm comparison-large.png
+rm jambo.png
+rm ubuntu.png
