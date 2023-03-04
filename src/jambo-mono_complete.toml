@@ -9,7 +9,10 @@ export-glyph-names = true
   inherits = "ss12"
 
     [buildPlans.jambo-mono-tall.variants.design]
+    capital-k = "straight-serifless"
     f = "serifless-crossbar-at-x-height"
+    j = "flat-hook-serifed"
+    k = "straight-serifless"
     t = "flat-hook"
     zero = "slashed"
     six = "closed-contour"
@@ -44,7 +47,10 @@ export-glyph-names = true
   inherits = "ss12"
 
     [buildPlans.jambo-mono.variants.design]
+    capital-k = "straight-serifless"
     f = "serifless-crossbar-at-x-height"
+    j = "flat-hook-serifed"
+    k = "straight-serifless"
     t = "flat-hook"
     zero = "slashed"
     six = "closed-contour"
