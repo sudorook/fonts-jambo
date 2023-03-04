@@ -1,10 +1,53 @@
 #! /bin/bash
 set -eu
 
-if [ "${EUID}" -eq 0 ]; then
-  mkdir -p /usr/local/share/fonts/jambo
-  cp -Ra {ttf,ttf-unhinted} /usr/local/share/fonts/jambo
-else
-  mkdir -p "${HOME}/.local/share/fonts/jambo"
-  cp -Ra {ttf,ttf-unhinted} "${HOME}/.local/share/fonts/jambo"
-fi
+function install_variant {
+  local variant="${1}"
+  local dest
+  if [ "${EUID}" -eq 0 ]; then
+    dest=/usr/local/share/fonts/jambo
+  else
+    dest="${HOME}/.local/share/fonts/jambo"
+  fi
+  mkdir -p "${dest}"
+  cp -Ra "${variant}/" "${dest}"
+}
+
+function print_usage {
+  echo "Usage:"
+  echo "  -u|--unhinted     install unhinted fils (default:false)"
+  echo "  -n|--nerd         install nerd-patched fils (default:false)"
+  echo "  -h|--help         print (this) message"
+}
+
+OPTIONS=hnu
+LONGOPTIONS=vim,neovim,help
+PARSED=$(getopt -o ${OPTIONS} --long ${LONGOPTIONS} -n "${0}" -- "${@}")
+eval set -- "${PARSED}"
+
+while [ ${#} -ge 1 ]; do
+  case "${1}" in
+    -u|--unhinted)
+      UNHINTED=true
+      shift
+      ;;
+    -n|--nerd)
+      NERD=true
+      shift
+      ;;
+    -h|--help)
+      print_usage
+      exit
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      echo "ERROR: invalid flag ${1@Q}."
+      exit 3
+      ;;
+  esac
+done
+
+install_variant ttf"${UNHINTED:+-unhinted}${NERD:+-nerd}"
