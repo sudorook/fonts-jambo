@@ -1,8 +1,8 @@
 # Jambo Mono Fonts
 
-Iosevka-derived fonts intended to closely match the Ubuntu Mono fonts,
-including [Nerd fonts](https://github.com/ryanoasis/nerd-fonts) patched
-variants.
+[Iosevka](https://github.com/be5invis/Iosevka)-derived fonts intended to
+closely match the Ubuntu Mono fonts, including [Nerd
+fonts](https://github.com/ryanoasis/nerd-fonts) patched variants.
 
 ## Alterations
 
@@ -36,17 +36,27 @@ the user is root or not. Run:
 
 ## Usage
 
-The non-Nerd Jambo fonts use the family name `Jambo Mono`, with each file
-corresponding to `Regular`, `Bold`, `Italic`, and `Bold Italic` styles.
-
-The Nerd-patched versions are instead named `Jambo Mono Nerd Font Complete`.
-This is the default name set by the`font-patcher` script found in the [Nerd
-fonts repository](https://github.com/ryanoasis/nerd-fonts).
-
+The fonts use the family name `Jambo Mono`, with each file corresponding to
+`Regular`, `Bold`, `Italic`, and `Bold Italic` styles. Should these fonts be
+too thin, use `Medium` instead of regular and `Heavy` instead of `Bold`.
 
 ## Building
 
-The config file used to generate all the fonts is available in `src/`. The
-`jambo-mono` build plan corresponds to the TTF files in this repository, and
-the `jambo-mono-tall` rules will build a variant with slightly taller capitals
-and numerals at larger font sizes.
+The configuration file used to generate all the fonts is available in `src/`.
+It was used to build using Iosevka 19.0.1.
+
+The `jambo-mono` build plan corresponds to the TTF files in this repository,
+and the `jambo-mono-tall` rules will build a variant with slightly taller
+capitals and numerals at larger font sizes.
+
+To run, first install TTF autohinter. Then, run:
+```bash
+git clone https://github.com/be5invis/Iosevka.git iosevka
+cd iosevka
+npm i
+npm run build -- contents::jambo-mono
+```
+
+Use `contets::jambo-mono-tall` for the tall variant, and `--jCmd=<n>` to run
+`n` threads in parallel. The files will be found in `dist/`. To apply the Nerd
+Font patch set, look at its online documentation.
