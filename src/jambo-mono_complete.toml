@@ -11,6 +11,7 @@ export-glyph-names = true
     [buildPlans.jambo-mono-tall.variants.design]
     capital-k = "straight-serifless"
     f = "serifless-crossbar-at-x-height"
+    i = "serifed-flat-tailed"
     j = "flat-hook-serifed"
     k = "straight-serifless"
     t = "flat-hook"
@@ -49,6 +50,7 @@ export-glyph-names = true
     [buildPlans.jambo-mono.variants.design]
     capital-k = "straight-serifless"
     f = "serifless-crossbar-at-x-height"
+    i = "serifed-flat-tailed"
     j = "flat-hook-serifed"
     k = "straight-serifless"
     t = "flat-hook"
