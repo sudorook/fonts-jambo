@@ -23,7 +23,7 @@ See below for a comparison between Jambo ('turquoise') and the original Ubuntu
 
 ![Bold Italic](assets/comparison-BI.png)
 
-Patched against Nerd fonts v2.3.3 (03/01/2023).
+Patched against Nerd fonts v2.3.3 (03/10/2023).
 
 ## Installation
 
@@ -41,6 +41,8 @@ The fonts use the family name `Jambo Mono`, with each file corresponding to
 too thin, use `Medium` instead of regular and `Heavy` instead of `Bold`.
 
 ## Building
+
+### Iosevka
 
 The configuration file used to generate all the fonts is available in `src/`.
 It was used to build using Iosevka 19.0.1.
@@ -60,3 +62,22 @@ npm run build -- contents::jambo-mono
 Use `contets::jambo-mono-tall` for the tall variant, and `--jCmd=<n>` to run
 `n` threads in parallel. The files will be found in `dist/`. To apply the Nerd
 Font patch set, look at its online documentation.
+
+### Nerd patching
+
+To patch the nerd font set, first download the font-patcher script from Nerd
+fonts and install fontforge. Then, in the `dist/` directory in the Iosevka
+repository, run:
+```sh
+DIRS=(jambo-mono/ttf jambo-mono/ttf-unhinted)
+for DIR in "${DIRS[@]}"; do
+  for FONT in "${DIR}"/*.ttf; do
+    fontforge \
+      -script <path/to/font-patcher> -q -l -c -w --careful \
+      -out "${DIR}-nerd" "${FONT}"
+  done
+done
+```
+
+Be sure to substitute `<path/to/font-patcher>` with the relative path to the
+Nerd `font-patcher` script.
