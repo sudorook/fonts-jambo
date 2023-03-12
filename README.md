@@ -4,6 +4,15 @@
 closely match the Ubuntu Mono fonts, including [Nerd
 fonts](https://github.com/ryanoasis/nerd-fonts) patched variants.
 
+Built with Iosevka 21.0.0 and Nerd Fonts 2.3.3.
+
+**NOTE:** To minimize file size, the compiled fonts are continually rebased to
+HEAD. This means that 1) the tree does not contain older variants and 2) any
+updates to the repository will trigger merge conflicts.
+
+For 1), use the provided to configuration files to compile previous variants,
+and for 2), simply force-pull/merge updates.
+
 ## Alterations
 
 1. `$` - vertical line through the center.
@@ -24,8 +33,6 @@ See below for a comparison between Jambo ('turquoise') and the original Ubuntu
 ![Bold](assets/comparison-B.png)
 
 ![Bold Italic](assets/comparison-BI.png)
-
-Patched against Nerd fonts v2.3.3 (03/10/2023).
 
 ## Installation
 
@@ -50,7 +57,6 @@ described above.
 ### Iosevka
 
 The configuration file used to generate all the fonts is available in `src/`.
-It was used to build using Iosevka 19.0.1.
 
 The `jambo-mono` build plan corresponds to the TTF files in this repository,
 and the `jambo-mono-tall` rules will build a variant with slightly taller
