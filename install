@@ -9,8 +9,12 @@ function install_variant {
   else
     dest="${HOME}/.local/share/fonts/jambo"
   fi
-  mkdir -p "${dest}"
-  cp -Ra "${variant}/" "${dest}"
+  if [ -d "${variant}/" ]; then
+    mkdir -p "${dest}"
+    cp -Ra "${variant}/" "${dest}"
+  else
+    echo "Font ${variant@Q} not found. Have fonts been compiled?"
+  fi
 }
 
 function print_usage {
