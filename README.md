@@ -11,6 +11,8 @@ fonts](https://github.com/ryanoasis/nerd-fonts) patched variants.
 3. `0` - diagonal line across the middle instead of a dot.
 4. `9` and `6` - curl the bottom/top (helps with hinting at lower sizes).
 5. `{` and `}` - make curlier.
+6. `8` - make crossing point in middle narrower to better distinguish the glyph
+   from `0`.
 
 See below for a comparison between Jambo ('turquoise') and the original Ubuntu
 ('coral'):
@@ -40,6 +42,9 @@ The fonts use the family name `Jambo Mono`, with each file corresponding to
 `Regular`, `Bold`, `Italic`, and `Bold Italic` styles. Should these fonts be
 too thin, use `Medium` instead of regular and `Heavy` instead of `Bold`.
 
+For the Nerd-patched fonts, append `Nerd Font Complete` to the family names
+described above.
+
 ## Building
 
 ### Iosevka
@@ -51,9 +56,11 @@ The `jambo-mono` build plan corresponds to the TTF files in this repository,
 and the `jambo-mono-tall` rules will build a variant with slightly taller
 capitals and numerals at larger font sizes.
 
-To run, first install TTF autohinter. Then, run:
+To build the font files, first install TTF autohinter.
+
+Then, run:
 ```bash
-git clone https://github.com/be5invis/Iosevka.git iosevka
+git clone --depth 1 https://github.com/be5invis/Iosevka.git iosevka
 cd iosevka
 npm i
 npm run build -- contents::jambo-mono
@@ -72,9 +79,8 @@ repository, run:
 DIRS=(jambo-mono/ttf jambo-mono/ttf-unhinted)
 for DIR in "${DIRS[@]}"; do
   for FONT in "${DIR}"/*.ttf; do
-    fontforge \
-      -script <path/to/font-patcher> -q -l -c -w --careful \
-      -out "${DIR}-nerd" "${FONT}"
+    fontforge -script <path/to/font-patcher> \
+      -q -l -c --careful -out "${DIR}-nerd" "${FONT}"
   done
 done
 ```
