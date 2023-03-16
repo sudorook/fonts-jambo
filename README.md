@@ -54,42 +54,5 @@ described above.
 
 ## Building
 
-### Iosevka
-
-The configuration file used to generate all the fonts is available in `src/`.
-
-The `jambo-mono` build plan corresponds to the TTF files in this repository,
-and the `jambo-mono-tall` rules will build a variant with slightly taller
-capitals and numerals at larger font sizes.
-
-To build the font files, first install TTF autohinter.
-
-Then, run:
-```bash
-git clone --depth 1 https://github.com/be5invis/Iosevka.git iosevka
-cd iosevka
-npm i
-npm run build -- contents::jambo-mono
-```
-
-Use `contets::jambo-mono-tall` for the tall variant, and `--jCmd=<n>` to run
-`n` threads in parallel. The files will be found in `dist/`. To apply the Nerd
-Font patch set, look at its online documentation.
-
-### Nerd patching
-
-To patch the nerd font set, first download the font-patcher script from Nerd
-fonts and install fontforge. Then, in the `dist/` directory in the Iosevka
-repository, run:
-```sh
-DIRS=(jambo-mono/ttf jambo-mono/ttf-unhinted)
-for DIR in "${DIRS[@]}"; do
-  for FONT in "${DIR}"/*.ttf; do
-    fontforge -script <path/to/font-patcher> \
-      -q -l -c --careful -out "${DIR}-nerd" "${FONT}"
-  done
-done
-```
-
-Be sure to substitute `<path/to/font-patcher>` with the relative path to the
-Nerd `font-patcher` script.
+For building the fonts, use or review the `./build` script at the root of the
+repository.

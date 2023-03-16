@@ -1,0 +1,79 @@
+#! /bin/bash
+set -eu
+
+show_error() {
+  echo -e $'\033[1;31m'"$*"$'\033[0m' 1>&2
+}
+export -f show_error
+
+check_command() {
+  local package
+  local missing=()
+  for package in "${@}"; do
+    if ! command -v "${package}" >/dev/null; then
+      missing+=("${package}")
+    fi
+  done
+  if [ ${#missing[@]} -eq 0 ]; then
+    return 0
+  else
+    show_error "MISSING: ${missing[*]@Q} not installed."
+    return 1
+  fi
+}
+export -f check_command
+
+! check_command git npm ttfautohint fontforge wget && exit 3
+
+ROOT="$(dirname "${0}")"
+DEST="${ROOT}"/dest
+BUILD=$(mktemp -d)
+VARIANT=jambo-mono
+
+trap 'rm -rf "${BUILD}"; exit' EXIT INT TERM ERROR
+
+pushd "${BUILD}" >/dev/null
+
+# Build TTF files using Iosevka
+git clone --depth 1 https://github.com/be5invis/Iosevka.git iosevka
+pushd iosevka >/dev/null
+cp "${ROOT}"/src/jambo-mono_complete.toml private-build-plans.toml
+npm install
+npm run build -- contents::"${VARIANT}"
+popd >/dev/null
+
+# Apply Nerd Fonts patches to TTF files to create *-nerd veriants.
+mkdir -p font-patcher
+pushd font-patcher >/dev/null
+wget https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip
+unzip FontPatcher.zip
+DIRS=(../iosevka/dist/"${VARIANT}"/ttf ../iosevka/dist/"${VARIANT}"/ttf-unhinted)
+for DIR in "${DIRS[@]}"; do
+  mkdir -p "${DIR}-nerd"
+  for FONT in "${DIR}"/*; do
+    echo "Patching ${FONT@Q}..."
+    fontforge -script font-patcher "${FONT}" -out "${DIR}-nerd" --careful -c -l -q >/dev/null 2>&1 &
+  done
+done
+popd >/dev/null
+
+# Re-arrange and rename files.
+for DIR in iosevka/dist/"${VARIANT}"/{ttf,ttf-unhinted}; do
+  pushd "${DIR}" >/dev/null
+  for FILE in *Nerd*; do
+    NEWFILE="$(echo "${FILE}" | \
+               tr '[:upper:]' '[:lower:]' | \
+               sed -e "s/jambo mono/jambo-mono-nerd/g" \
+                   -e "s/\ nerd font complete//g" \
+                   -e "s/nerd /nerd-/g" \
+                   -e "s/ //g")"
+    mv "${FILE}" "${NEWFILE}"
+  done
+  popd >/dev/null
+done
+
+# Move final files to "${DEST}" directory.
+mv iosevka/dist/"${VARIANT}" "${DEST}"
+sync
+
+popd >/dev/null
