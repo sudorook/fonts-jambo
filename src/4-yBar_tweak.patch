@@ -1,0 +1,13 @@
+diff --git a/font-src/glyphs/number/4.ptl b/font-src/glyphs/number/4.ptl
+index f2d55ef..dde31b7 100644
+--- a/font-src/glyphs/number/4.ptl
++++ b/font-src/glyphs/number/4.ptl
+@@ -11,7 +11,7 @@ glyph-block Digits-Four : begin
+ 	glyph-block-import Digits-Shared : OnumMarks ShiftDown CodeLnum CodeOnum
+ 
+ 	define [FourStdShape] : params [top open crossing [fine : AdviceStroke 3] [sw Stroke] [bbd 0]] : glyph-proc
+-		local yBar : top * 0.3 + 0.625 * sw
++		local yBar : top * 0.3333 + 0.625 * sw
+ 
+ 		define xVertBar : [mix SB RightSB : if crossing 0.75 0.9125] - (bbd * 0.75) + [if crossing (0.375 * sw * HVContrast) 0]
+ 		define yVertBarTop : [mix (yBar - sw) top : if open 0.5 1] - [if open (0.3 * sw) 0]

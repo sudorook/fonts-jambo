@@ -38,6 +38,7 @@ pushd "${BUILD}" >/dev/null
 git clone --depth 1 https://github.com/be5invis/Iosevka.git iosevka
 pushd iosevka >/dev/null
 cp "${ROOT}"/src/jambo-mono_complete.toml private-build-plans.toml
+git apply "${ROOT}"/src/4-yBar_tweak.patch
 npm install
 npm run build -- contents::"${VARIANT}"
 popd >/dev/null
