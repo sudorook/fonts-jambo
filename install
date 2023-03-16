@@ -1,17 +1,20 @@
 #! /bin/bash
 set -eu
 
+ROOT="$(dirname "${0}")"
+
 function install_variant {
   local variant="${1}"
+  local variant_dir="${ROOT}/fonts/${1}"
   local dest
   if [ "${EUID}" -eq 0 ]; then
     dest=/usr/local/share/fonts/jambo
   else
     dest="${HOME}/.local/share/fonts/jambo"
   fi
-  if [ -d "${variant}/" ]; then
+  if [ -d "${variant_dir}/" ]; then
     mkdir -p "${dest}"
-    cp -Ra "${variant}/" "${dest}"
+    cp -Ra "${variant_dir}/" "${dest}"
   else
     echo "Font ${variant@Q} not found. Have fonts been compiled?"
   fi
