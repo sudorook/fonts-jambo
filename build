@@ -25,12 +25,12 @@ export -f check_command
 
 ! check_command git npm ttfautohint fontforge wget && exit 3
 
-ROOT="$(dirname "${0}")"
+ROOT="$(readlink -f "$(dirname "${0}")")"
 DEST="${ROOT}"/dest
 BUILD=$(mktemp -d)
 VARIANT=jambo-mono
 
-trap 'rm -rf "${BUILD}"; exit' EXIT INT TERM ERROR
+trap 'rm -rf "${BUILD}"; exit' EXIT INT TERM ERR
 
 pushd "${BUILD}" >/dev/null
 
@@ -59,7 +59,7 @@ done
 popd >/dev/null
 
 # Re-arrange and rename files.
-for DIR in iosevka/dist/"${VARIANT}"/{ttf,ttf-unhinted}; do
+for DIR in iosevka/dist/"${VARIANT}"/{ttf-nerd,ttf-unhinted-nerd}; do
   pushd "${DIR}" >/dev/null
   for FILE in *Nerd*; do
     NEWFILE="$(echo "${FILE}" | \
