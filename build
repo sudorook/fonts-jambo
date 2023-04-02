@@ -48,12 +48,18 @@ mkdir -p font-patcher
 pushd font-patcher >/dev/null
 wget https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip
 unzip FontPatcher.zip
-DIRS=(../iosevka/dist/"${VARIANT}"/ttf ../iosevka/dist/"${VARIANT}"/ttf-unhinted)
-for DIR in "${DIRS[@]}"; do
+N="$(nproc)"
+I=0
+for DIR in ../iosevka/dist/"${VARIANT}"/{ttf,ttf-unhinted}; do
   mkdir -p "${DIR}-nerd"
-  for FONT in "${DIR}"/*; do
+  for FONT in "${DIR}"/*.ttf; do
     echo "Patching ${FONT@Q}..."
     fontforge -script font-patcher "${FONT}" -out "${DIR}-nerd" --careful -c -l -q >/dev/null 2>&1 &
+    I=$((I+1))
+    if [ $((I%N)) -eq 0 ]; then
+      I=0
+      wait
+    fi
   done
 done
 popd >/dev/null
