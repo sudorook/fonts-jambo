@@ -6,12 +6,13 @@ fonts](https://github.com/ryanoasis/nerd-fonts) patched variants.
 
 Built with Iosevka 21.0.0 and Nerd Fonts 2.3.3.
 
-**NOTE:** To minimize file size, the compiled fonts are continually rebased to
-HEAD. This means that 1) the tree does not contain older variants and 2) any
-updates to the repository will trigger merge conflicts.
+**NOTE:** To minimize repository size, the compiled fonts are continually
+rebased to HEAD. This means that 1) the tree only contains build files for
+older variants instead of the actual font files, and 2) any updates to the
+repository will cause merge conflicts in already-cloned repositories.
 
 For 1), use the provided to configuration files to compile previous variants,
-and for 2), simply force-pull/merge updates.
+and for 2), simply force-pull/merge updates or re-clone the repository.
 
 ## Alterations
 
@@ -42,6 +43,9 @@ the user is root or not. Run:
 ```bash
 ./install
 ```
+
+To install Nerd-patched and/or unhinted variants, use the `-n` and `-u` flags,
+respectively.
 
 ## Usage
 
