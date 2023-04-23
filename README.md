@@ -4,7 +4,7 @@
 closely match the Ubuntu Mono fonts, including [Nerd
 fonts](https://github.com/ryanoasis/nerd-fonts) patched variants.
 
-Built with Iosevka 21.0.0 and Nerd Fonts 2.3.3.
+Built with Iosevka 22.1.0 and Nerd Fonts 2.3.3.
 
 **NOTE:** To minimize repository size, the compiled fonts are continually
 rebased to HEAD. This means that 1) the tree only contains build files for
