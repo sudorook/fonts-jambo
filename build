@@ -53,6 +53,7 @@ patch_nerd_fonts() {
         wait
       fi
     done
+    wait
   done
   popd >/dev/null
 }
