@@ -30,7 +30,7 @@ DEST="${ROOT}"/dest
 BUILD=$(mktemp -d)
 VARIANT=jambo-mono
 
-trap 'rm -rf "${BUILD}"; exit' EXIT INT TERM ERR
+trap 'rm -rf "${BUILD}"; exit' EXIT INT TERM
 
 pushd "${BUILD}" >/dev/null
 
