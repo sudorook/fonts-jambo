@@ -1,15 +1,15 @@
 # Jambo Mono Fonts
 
-[Iosevka](https://github.com/be5invis/Iosevka)-derived fonts intended to
-closely match the Ubuntu Mono fonts, including [Nerd
-fonts](https://github.com/ryanoasis/nerd-fonts) patched variants.
+[Iosevka](https://github.com/be5invis/Iosevka)-derived fonts intended to closely
+match the Ubuntu Mono fonts, including
+[Nerd fonts](https://github.com/ryanoasis/nerd-fonts) patched variants.
 
 Built with Iosevka 22.1.0 and Nerd Fonts 3.0.0.
 
 **NOTE:** To minimize repository size, the compiled fonts are continually
-rebased to HEAD. This means that 1) the tree only contains build files for
-older variants instead of the actual font files, and 2) any updates to the
-repository will cause merge conflicts in already-cloned repositories.
+rebased to HEAD. This means that 1) the tree only contains build files for older
+variants instead of the actual font files, and 2) any updates to the repository
+will cause merge conflicts in already-cloned repositories.
 
 For 1), use the provided to configuration files to compile previous variants,
 and for 2), simply force-pull/merge updates or re-clone the repository.
@@ -40,6 +40,7 @@ See below for a comparison between Jambo ('turquoise') and the original Ubuntu
 The `install` script will install the font in either
 `${HOME}/.local/share/fonts` or `/usr/local/share/fonts`, depending on whether
 the user is root or not. Run:
+
 ```bash
 ./install
 ```
@@ -50,8 +51,8 @@ respectively.
 ## Usage
 
 The fonts use the family name `Jambo Mono`, with each file corresponding to
-`Regular`, `Bold`, `Italic`, and `Bold Italic` styles. Should these fonts be
-too thin, use `Medium` instead of regular and `Heavy` instead of `Bold`.
+`Regular`, `Bold`, `Italic`, and `Bold Italic` styles. Should these fonts be too
+thin, use `Medium` instead of regular and `Heavy` instead of `Bold`.
 
 For the Nerd-patched fonts, append `Nerd Font Complete` to the family names
 described above.
