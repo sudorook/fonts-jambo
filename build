@@ -1,11 +1,13 @@
 #! /bin/bash
 set -eu
 
+# Colored prompt for error messages.
 show_error() {
   echo -e $'\033[1;31m'"$*"$'\033[0m' 1>&2
 }
 export -f show_error
 
+# Check if list of command-line programs are in the PATH.
 check_command() {
   local package
   local missing=()
@@ -23,9 +25,9 @@ check_command() {
 }
 export -f check_command
 
-  # Build TTF files using Iosevka
+# Build TTF files using Iosevka
 build_iosevka() {
-  git clone --depth 1 https://github.com/be5invis/Iosevka.git iosevka
+  git clone --depth 1 --branch "${IOSEVKA}" https://github.com/be5invis/Iosevka.git iosevka
   pushd iosevka >/dev/null
   cp "${ROOT}"/src/jambo-mono_complete.toml private-build-plans.toml
   git apply "${ROOT}"/src/4-yBar_tweak.patch
@@ -38,7 +40,7 @@ build_iosevka() {
 patch_nerd_fonts() {
   mkdir -p font-patcher
   pushd font-patcher >/dev/null
-  wget https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip
+  wget https://github.com/ryanoasis/nerd-fonts/releases/download/"${NERDFONT}"/FontPatcher.zip
   unzip FontPatcher.zip
   N="$(nproc)"
   I=0
@@ -47,8 +49,8 @@ patch_nerd_fonts() {
     for FONT in "${DIR}"/*.ttf; do
       echo "Patching ${FONT@Q}..."
       fontforge -script font-patcher "${FONT}" -out "${DIR}-nerd" --careful -c -l -q >/dev/null 2>&1 &
-      I=$((I+1))
-      if [ $((I%N)) -eq 0 ]; then
+      I=$((I + 1))
+      if [ $((I % N)) -eq 0 ]; then
         I=0
         wait
       fi
@@ -63,8 +65,8 @@ rename_nerd_ttf() {
   for DIR in iosevka/dist/"${VARIANT}"/{ttf-nerd,ttf-unhinted-nerd}; do
     pushd "${DIR}" >/dev/null
     for FILE in *Nerd*; do
-      NEWFILE="$(echo "${FILE}" | \
-                tr '[:upper:]' '[:lower:]' | \
+      NEWFILE="$(echo "${FILE}" |
+                tr '[:upper:]' '[:lower:]' |
                 sed -e "s/jambo mono/jambo-mono-nerd/g" \
                     -e "s/\ nerd font complete//g" \
                     -e "s/nerd /nerd-/g" \
@@ -80,8 +82,10 @@ rename_nerd_ttf() {
 
 ROOT="$(readlink -f "$(dirname "${0}")")"
 DEST="${ROOT}"/dest
+IOSEVKA=22.1.2
+NERDFONT=3.0.1
 BUILD=$(mktemp -d)
-VARIANT=jambo-mono
+VARIANT=jambo-mono # alternative: jambo-mono-tall
 
 trap 'rm -rf "${BUILD}"; exit' EXIT INT TERM
 
