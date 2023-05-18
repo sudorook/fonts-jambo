@@ -28,7 +28,7 @@ function print_usage {
 }
 
 OPTIONS=hnu
-LONGOPTIONS=vim,neovim,help
+LONGOPTIONS=help,nerd,unhinted
 PARSED=$(getopt -o ${OPTIONS} --long ${LONGOPTIONS} -n "${0}" -- "${@}")
 eval set -- "${PARSED}"
 
