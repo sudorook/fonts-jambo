@@ -54,8 +54,7 @@ The fonts use the family name `Jambo Mono`, with each file corresponding to
 `Regular`, `Bold`, `Italic`, and `Bold Italic` styles. Should these fonts be too
 thin, use `Medium` instead of regular and `Heavy` instead of `Bold`.
 
-For the Nerd-patched fonts, append `Nerd Font Complete` to the family names
-described above.
+For the Nerd-patched fonts, the family name is instead `JamboMono Nerd Font`.
 
 ## Building
 
