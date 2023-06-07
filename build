@@ -1,5 +1,5 @@
 #! /bin/bash
-set -eu
+set -Eeuo pipefail
 
 # Colored prompt for error messages.
 show_error() {
