@@ -90,8 +90,8 @@ rename_nerd_ttf() {
 
 ROOT="$(readlink -f "$(dirname "${0}")")"
 DEST="${ROOT}"/dest
-IOSEVKA=v24.1.0
-NERDFONT=v3.0.1
+IOSEVKA=v24.1.1
+NERDFONT=v3.0.2
 BUILD=$(mktemp -d)
 VARIANT=jambo-mono # alternative: jambo-mono-tall
 
