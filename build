@@ -27,7 +27,11 @@ export -f check_command
 
 # Build TTF files using Iosevka
 build_iosevka() {
-  git clone --depth 1 --branch "${IOSEVKA}" https://github.com/be5invis/Iosevka.git iosevka
+  if [[ "${IOSEVKA}" = "HEAD" ]]; then
+    git clone --depth 1 https://github.com/be5invis/Iosevka.git iosevka
+  else
+    git clone --depth 1 --branch "${IOSEVKA}" https://github.com/be5invis/Iosevka.git iosevka
+  fi
   pushd iosevka >/dev/null
   cp "${ROOT}"/src/jambo-mono_complete.toml private-build-plans.toml
   git apply "${ROOT}"/src/4-yBar_tweak.patch
@@ -40,7 +44,11 @@ build_iosevka() {
 patch_nerd_fonts() {
   mkdir -p font-patcher
   pushd font-patcher >/dev/null
-  wget https://github.com/ryanoasis/nerd-fonts/releases/download/"${NERDFONT}"/FontPatcher.zip
+  if [[ "${NERDFONT}" = "latest" ]]; then
+    wget https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip
+  else
+    wget https://github.com/ryanoasis/nerd-fonts/releases/download/"${NERDFONT}"/FontPatcher.zip
+  fi
   unzip FontPatcher.zip
   N="$(nproc)"
   I=0
