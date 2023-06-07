@@ -58,5 +58,25 @@ For the Nerd-patched fonts, the family name is instead `JamboMono Nerd Font`.
 
 ## Building
 
-For building the fonts, use or review the `./build` script at the root of the
-repository.
+### Manual
+
+To build the fonts, use or review the `./build` script at the root of the
+repository. The script will warn about missing dependencies first.
+
+### Container
+
+Avoid installing the dependencies by using the Containerfile to build a
+Debian-based image to run the build script instead.
+
+```sh
+podman build -t jambo-build .
+```
+
+When running the build image, create a directory and mount it as a volume:
+
+```sh
+podman run --rm --network host -v </abs/path/to/dest/>:/home/dest:Z localhost/jambo-build:latest
+```
+
+The `</abs/path/to/dest/>` is the _absolute path_ to the destination directory
+for the compiled font tiles.
