@@ -1,5 +1,5 @@
 diff --git a/font-src/glyphs/number/4.ptl b/font-src/glyphs/number/4.ptl
-index f1cc732d..db9a5fa6 100644
+index 506aa34..0f90974 100644
 --- a/font-src/glyphs/number/4.ptl
 +++ b/font-src/glyphs/number/4.ptl
 @@ -11,7 +11,7 @@ glyph-block Digits-Four : begin
@@ -9,5 +9,5 @@ index f1cc732d..db9a5fa6 100644
 -		local yBar : top * 0.3 + 0.625 * sw
 +		local yBar : top * 0.3333 + 0.625 * sw
  
- 		define xVertBar : [mix SB RightSB : if crossing 0.75 0.9125] - (bbd * 0.75) + [if crossing ([HSwToV : 0.375 * sw]) 0]
+ 		define xVertBar : [mix SB RightSB : if crossing 0.75 0.9125] - (bbd * 0.75) + [if crossing [HSwToV : 0.375 * sw] 0]
  		define yVertBarTop : [mix (yBar - sw) top : if open 0.5 1] - [if open (0.3 * sw) 0]
