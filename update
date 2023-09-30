@@ -100,7 +100,7 @@ function build_update {
 function commit_changes {
   pushd "${ROOT}" > /dev/null
 
-  if [[ "$(git log -1 --pretty=%B)" = "compile and commit font files" ]]; then
+  if [[ "$(git log -1 --pretty=%B)" = "compile and commit fonts" ]]; then
     git reset HEAD~1
   fi
 
