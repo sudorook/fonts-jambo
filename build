@@ -90,7 +90,7 @@ rename_nerd_ttf() {
 
 ROOT="$(readlink -f "$(dirname "${0}")")"
 DEST="${ROOT}"/dest
-IOSEVKA=v27.0.2
+IOSEVKA=v27.1.0
 NERDFONT=v3.0.2
 # IOSEVKA=HEAD
 # NERDFONT=latest
