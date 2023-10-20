@@ -38,18 +38,18 @@ build_iosevka() {
   else
     git clone --depth 1 --branch "${IOSEVKA}" https://github.com/be5invis/Iosevka.git iosevka
   fi
-  pushd iosevka >/dev/null
+  pushd iosevka > /dev/null
   cp "${ROOT}"/src/jambo-mono_complete.toml private-build-plans.toml
   git apply "${ROOT}"/src/4-yBar_tweak.patch
   npm install
   npm run build -- contents::"${VARIANT}"
-  popd >/dev/null
+  popd > /dev/null
 }
 
 # Apply Nerd Fonts patches to TTF files to create *-nerd veriants.
 patch_nerd_fonts() {
   mkdir -p font-patcher
-  pushd font-patcher >/dev/null
+  pushd font-patcher > /dev/null
   if [[ "${NERDFONT}" = "latest" ]]; then
     wget https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip
   else
@@ -62,7 +62,7 @@ patch_nerd_fonts() {
     mkdir -p "${DIR}-nerd"
     for FONT in "${DIR}"/*.ttf; do
       echo "Patching ${FONT@Q}..."
-      fontforge -script font-patcher "${FONT}" -out "${DIR}-nerd" --careful -c -l -q >/dev/null 2>&1 &
+      fontforge -script font-patcher "${FONT}" -out "${DIR}-nerd" --careful -c -l -q > /dev/null 2>&1 &
       I=$((I + 1))
       if [ $((I % N)) -eq 0 ]; then
         I=0
@@ -71,13 +71,13 @@ patch_nerd_fonts() {
     done
     wait
   done
-  popd >/dev/null
+  popd > /dev/null
 }
 
 # Re-arrange and rename files.
 rename_nerd_ttf() {
   for DIR in iosevka/dist/"${VARIANT}"/{ttf-nerd,ttf-unhinted-nerd}; do
-    pushd "${DIR}" >/dev/null
+    pushd "${DIR}" > /dev/null
     for FILE in *Nerd*; do
       NEWFILE="$(echo "${FILE}" |
                 tr '[:upper:]' '[:lower:]' |
@@ -88,7 +88,7 @@ rename_nerd_ttf() {
                     -e "s/ //g")"
       mv "${FILE}" "${NEWFILE}"
     done
-    popd >/dev/null
+    popd > /dev/null
   done
 }
 
@@ -105,7 +105,7 @@ VARIANT=jambo-mono # alternative: jambo-mono-tall
 
 trap 'rm -rf "${BUILD}"; exit' EXIT INT TERM
 
-pushd "${BUILD}" >/dev/null
+pushd "${BUILD}" > /dev/null
 
 build_iosevka
 patch_nerd_fonts
@@ -115,4 +115,4 @@ rename_nerd_ttf
 mv iosevka/dist/"${VARIANT}" "${DEST}"
 sync
 
-popd >/dev/null
+popd > /dev/null

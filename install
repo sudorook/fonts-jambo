@@ -34,15 +34,15 @@ eval set -- "${PARSED}"
 
 while [ ${#} -ge 1 ]; do
   case "${1}" in
-    -u|--unhinted)
+    -u | --unhinted)
       UNHINTED=true
       shift
       ;;
-    -n|--nerd)
+    -n | --nerd)
       NERD=true
       shift
       ;;
-    -h|--help)
+    -h | --help)
       print_usage
       exit
       ;;
