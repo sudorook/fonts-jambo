@@ -1,35 +1,9 @@
 #! /bin/bash
 set -Eeuo pipefail
 
-# Colored prompt for error messages.
-show_error() {
-  local red=$'\033[0;91m'
-  local nc=$'\033[0m'
-  if [[ "${1:--e}" =~ ^(-e|-n)$ ]]; then
-    echo "${1:--e}" "${red}${*:2}${nc}" 1>&2
-  else
-    echo -e "${red}${*}${nc}" 1>&2
-  fi
-}
-export -f show_error
+ROOT="$(dirname "${0}")"
 
-# Check if list of command-line programs are in the PATH.
-check_command() {
-  local package
-  local missing=()
-  for package in "${@}"; do
-    if ! command -v "${package}" >/dev/null; then
-      missing+=("${package}")
-    fi
-  done
-  if [ ${#missing[@]} -eq 0 ]; then
-    return 0
-  else
-    show_error "MISSING: ${missing[*]@Q} not installed."
-    return 1
-  fi
-}
-export -f check_command
+source "${ROOT}"/globals
 
 # Build TTF files using Iosevka
 build_iosevka() {

@@ -7,6 +7,7 @@ RUN apt-get update && \
 
 COPY src /home/src
 COPY build /home/build
+COPY globals /home/globals
 
 WORKDIR /home
 

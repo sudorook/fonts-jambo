@@ -3,6 +3,8 @@ set -eu
 
 ROOT="$(dirname "${0}")"
 
+source "${ROOT}"/globals
+
 function install_variant {
   local variant="${1}"
   local variant_dir="${ROOT}/fonts/${1}"
