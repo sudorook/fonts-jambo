@@ -3,7 +3,13 @@ set -Eeuo pipefail
 
 # Colored prompt for error messages.
 show_error() {
-  echo -e $'\033[1;31m'"$*"$'\033[0m' 1>&2
+  local red=$'\033[0;91m'
+  local nc=$'\033[0m'
+  if [[ "${1:--e}" =~ ^(-e|-n)$ ]]; then
+    echo "${1:--e}" "${red}${*:2}${nc}" 1>&2
+  else
+    echo -e "${red}${*}${nc}" 1>&2
+  fi
 }
 export -f show_error
 
