@@ -35,7 +35,7 @@ patch_nerd_fonts() {
   for DIR in ../iosevka/dist/"${VARIANT}"/{ttf,ttf-unhinted}; do
     mkdir -p "${DIR}-nerd"
     for FONT in "${DIR}"/*.ttf; do
-      echo "Patching ${FONT@Q}..."
+      show_info "Patching ${FONT@Q}..."
       fontforge -script font-patcher "${FONT}" -out "${DIR}-nerd" --careful -c -l -q > /dev/null 2>&1 &
       I=$((I + 1))
       if [ $((I % N)) -eq 0 ]; then

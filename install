@@ -18,15 +18,18 @@ function install_variant {
     mkdir -p "${dest}"
     cp -Ra "${variant_dir}/" "${dest}"
   else
-    echo "Font ${variant@Q} not found. Have fonts been compiled?"
+    show_error "Font ${variant@Q} not found. Have fonts been compiled?"
+    exit 3
   fi
 }
 
 function print_usage {
-  echo "Usage:"
-  echo "  -u|--unhinted     install unhinted fils (default:false)"
-  echo "  -n|--nerd         install nerd-patched fils (default:false)"
-  echo "  -h|--help         print (this) message"
+  show_header "Usage:"
+  cat << EOF
+  -u|--unhinted     install unhinted fils (default:false)
+  -n|--nerd         install nerd-patched fils (default:false)
+  -h|--help         print (this) message
+EOF
 }
 
 OPTIONS=hnu
