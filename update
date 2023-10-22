@@ -26,10 +26,12 @@ function build_update {
   # Update README and build script.
   sed -i \
     -e "s/^IOSEVKA=${IOSEVKA_CURRENT}/IOSEVKA=${IOSEVKA_LATEST}/g" \
-    -e "s/^NERDFONT=${NERDFONT_CURRENT}/NERDFONT=${NERDFONT_LATEST}/g" "${ROOT}"/build
+    -e "s/^NERDFONT=${NERDFONT_CURRENT}/NERDFONT=${NERDFONT_LATEST}/g" \
+    "${ROOT}"/build
   sed -i \
     -e "s/Iosevka ${IOSEVKA_CURRENT#v}/Iosevka ${IOSEVKA_LATEST#v}/g" \
-    -e "s/Nerd Fonts ${NERDFONT_CURRENT#v}/Nerd Fonts ${NERDFONT_LATEST#v}/g" "${ROOT}"/README.md
+    -e "s/Nerd Fonts ${NERDFONT_CURRENT#v}/Nerd Fonts ${NERDFONT_LATEST#v}/g" \
+    "${ROOT}"/README.md
 
   # Download/compile requisite podman images.
   podman build -t jambo-build "${ROOT}"
