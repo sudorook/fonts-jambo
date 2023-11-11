@@ -4,41 +4,38 @@ set -eu
 DIR="$(dirname "${0}")"
 SAMPLE="ascii.txt"
 DENSITY=300
-JSIZE=91
-USIZE=109
+JSIZE=20
+USIZE=24 # JSIZEx1.2
+
+mkdir -p "${DIR}"/../assets/
 
 # Regular
-magick +antialias -density "${DENSITY}" -fill turquoise -font ../fonts/ttf/jambo-mono-regular.ttf \
+magick -density "${DENSITY}" -fill turquoise -font ../fonts/ttf/jambo-mono-regular.ttf \
   -pointsize "${JSIZE}" label:@"${SAMPLE}" jambo.png
-magick +antialias -density "${DENSITY}" -fill coral -font UbuntuMono-R.ttf \
+magick -density "${DENSITY}" -fill coral -font UbuntuMono-R.ttf \
   -pointsize "${USIZE}" label:@"${SAMPLE}" ubuntu.png
-magick ubuntu.png jambo.png -compose multiply -composite comparison-large.png
-magick comparison-large.png -resize 25% "${DIR}"/../assets/comparison-R.png
+magick ubuntu.png jambo.png -compose multiply -composite "${DIR}"/../assets/comparison-R.png
 
 # Bold
-magick +antialias -density "${DENSITY}" -fill turquoise -font ../fonts/ttf/jambo-mono-bold.ttf \
+magick -density "${DENSITY}" -fill turquoise -font ../fonts/ttf/jambo-mono-bold.ttf \
   -pointsize "${JSIZE}" label:@"${SAMPLE}" jambo.png
-magick +antialias -density "${DENSITY}" -fill coral -font UbuntuMono-B.ttf \
+magick -density "${DENSITY}" -fill coral -font UbuntuMono-B.ttf \
   -pointsize "${USIZE}" label:@"${SAMPLE}" ubuntu.png
-magick ubuntu.png jambo.png -compose multiply -composite comparison-large.png
-magick comparison-large.png -resize 25% "${DIR}"/../assets/comparison-B.png
+magick ubuntu.png jambo.png -compose multiply -composite "${DIR}"/../assets/comparison-B.png
 
 # Italic
-magick +antialias -density "${DENSITY}" -fill turquoise -font ../fonts/ttf/jambo-mono-italic.ttf \
+magick -density "${DENSITY}" -fill turquoise -font ../fonts/ttf/jambo-mono-italic.ttf \
   -pointsize "${JSIZE}" label:@"${SAMPLE}" jambo.png
-magick +antialias -density "${DENSITY}" -fill coral -font UbuntuMono-RI.ttf \
+magick -density "${DENSITY}" -fill coral -font UbuntuMono-RI.ttf \
   -pointsize "${USIZE}" label:@"${SAMPLE}" ubuntu.png
-magick ubuntu.png jambo.png -compose multiply -composite comparison-large.png
-magick comparison-large.png -resize 25% "${DIR}"/../assets/comparison-RI.png
+magick ubuntu.png jambo.png -compose multiply -composite "${DIR}"/../assets/comparison-RI.png
 
 # Bold Italic
-magick +antialias -density "${DENSITY}" -fill turquoise -font ../fonts/ttf/jambo-mono-bolditalic.ttf \
+magick -density "${DENSITY}" -fill turquoise -font ../fonts/ttf/jambo-mono-bolditalic.ttf \
   -pointsize "${JSIZE}" label:@"${SAMPLE}" jambo.png
-magick +antialias -density "${DENSITY}" -fill coral -font UbuntuMono-BI.ttf \
+magick -density "${DENSITY}" -fill coral -font UbuntuMono-BI.ttf \
   -pointsize "${USIZE}" label:@"${SAMPLE}" ubuntu.png
-magick ubuntu.png jambo.png -compose multiply -composite comparison-large.png
-magick comparison-large.png -resize 25% "${DIR}"/../assets/comparison-BI.png
+magick ubuntu.png jambo.png -compose multiply -composite "${DIR}"/../assets/comparison-BI.png
 
-rm comparison-large.png
 rm jambo.png
 rm ubuntu.png
