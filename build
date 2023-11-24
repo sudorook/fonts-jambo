@@ -54,25 +54,31 @@ patch_nerd_fonts() {
 }
 
 # Re-arrange and rename files.
-rename_ttf() {
+copy_rename_files() {
   local dir
   local file
   local newfile
 
   for dir in iosevka/dist/"${VARIANT}"/{TTF,TTF-Unhinted,WOFF2,WOFF2-Unhinted}; do
     pushd "${dir}" > /dev/null
+    mkdir -p "${DEST}/${dir,,}"
     for file in *; do
       newfile="$(echo "${file}" |
                 tr '[:upper:]' '[:lower:]' |
-                sed -e "s/-normal/-/g" -e "s/-\./-regular./g")"
+                sed -e "s/-normal/-/g" \
+                    -e "s/-\././g" \
+                    -e "s/^${VARIANT}\./${VARIANT}-regular./g")"
       if [ -n "${newfile}" ]; then
-        mv "${file}" "${newfile}"
+        cp -v "${file}" "${DEST}/${dir,,}/${newfile}"
+      else
+        cp -v "${file}" "${DEST}/${dir,,}/${file}"
       fi
     done
     popd > /dev/null
   done
   for dir in iosevka/dist/"${VARIANT}"/{TTF-Nerd,TTF-Unhinted-Nerd}; do
     pushd "${dir}" > /dev/null
+    mkdir -p "${DEST}/${dir,,}"
     for file in *Nerd*; do
       newfile="$(echo "${file}" |
                 tr '[:upper:]' '[:lower:]' |
@@ -82,7 +88,9 @@ rename_ttf() {
                     -e "s/jambomononerdfont/jambo-mono-nerd/g" \
                     -e "s/ //g")"
       if [ -n "${newfile}" ]; then
-        mv "${file}" "${newfile}"
+        cp -v "${file}" "${DEST}/${dir,,}/${newfile}"
+      else
+        cp -v "${file}" "${DEST}/${dir,,}/${file}"
       fi
     done
     popd > /dev/null
@@ -106,10 +114,8 @@ pushd "${BUILD}" > /dev/null
 
 build_iosevka
 patch_nerd_fonts
-rename_ttf
+copy_rename_files
 
-# Move final files to "${DEST}" directory.
-mv iosevka/dist/"${VARIANT}" "${DEST}"
 sync
 
 popd > /dev/null
