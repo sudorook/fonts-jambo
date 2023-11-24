@@ -56,7 +56,9 @@ rename_ttf() {
       NEWFILE="$(echo "${FILE}" |
                 tr '[:upper:]' '[:lower:]' |
                 sed -e "s/-normal/-/g" -e "s/-\./-regular./g")"
-      mv "${FILE}" "${NEWFILE}"
+      if [ -n "${NEWFILE}" ]; then
+        mv "${FILE}" "${NEWFILE}"
+      fi
     done
     popd > /dev/null
   done
@@ -70,7 +72,9 @@ rename_ttf() {
                     -e "s/nerd /nerd-/g" \
                     -e "s/jambomononerdfont/jambo-mono-nerd/g" \
                     -e "s/ //g")"
-      mv "${FILE}" "${NEWFILE}"
+      if [ -n "${NEWFILE}" ]; then
+        mv "${FILE}" "${NEWFILE}"
+      fi
     done
     popd > /dev/null
   done
