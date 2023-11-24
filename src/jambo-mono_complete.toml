@@ -2,8 +2,8 @@
 family = "Jambo Mono"
 spacing = "normal"
 serifs = "sans"
-no-cv-ss = false
-export-glyph-names = true
+noCvSs = false
+exportGlyphNames = true
 
   [buildPlans.jambo-mono-tall.variants]
   inherits = "ss12"
@@ -29,7 +29,7 @@ shape = 600
 menu = 5
 css = "normal"
 
-[buildPlans.jambo-mono-tall.metric-override]
+[buildPlans.jambo-mono-tall.metricOverride]
 symbolMid = 295 # 340
 cap = 710 # 735
 ascender = 745 # 735
@@ -41,8 +41,8 @@ parenSize = 1016 # 966
 family = "Jambo Mono"
 spacing = "normal"
 serifs = "sans"
-no-cv-ss = false
-export-glyph-names = true
+noCvSs = false
+exportGlyphNames = true
 
   [buildPlans.jambo-mono.variants]
   inherits = "ss12"
@@ -68,7 +68,7 @@ shape = 600
 menu = 5
 css = "normal"
 
-[buildPlans.jambo-mono.metric-override]
+[buildPlans.jambo-mono.metricOverride]
 symbolMid = 295 # 340
 cap = 700 # 735
 ascender = 735 # 735

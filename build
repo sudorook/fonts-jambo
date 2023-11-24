@@ -32,11 +32,11 @@ patch_nerd_fonts() {
   unzip FontPatcher.zip
   N="$(nproc)"
   I=0
-  for DIR in ../iosevka/dist/"${VARIANT}"/{ttf,ttf-unhinted}; do
-    mkdir -p "${DIR}-nerd"
+  for DIR in ../iosevka/dist/"${VARIANT}"/{TTF,TTF-Unhinted}; do
+    mkdir -p "${DIR}-Nerd"
     for FONT in "${DIR}"/*.ttf; do
       show_info "Patching ${FONT@Q}..."
-      fontforge -script font-patcher "${FONT}" -out "${DIR}-nerd" --careful -c -l -q > /dev/null 2>&1 &
+      fontforge -script font-patcher "${FONT}" -out "${DIR}-Nerd" --careful -c -l -q > /dev/null 2>&1 &
       I=$((I + 1))
       if [ $((I % N)) -eq 0 ]; then
         I=0
@@ -49,8 +49,18 @@ patch_nerd_fonts() {
 }
 
 # Re-arrange and rename files.
-rename_nerd_ttf() {
-  for DIR in iosevka/dist/"${VARIANT}"/{ttf-nerd,ttf-unhinted-nerd}; do
+rename_ttf() {
+  for DIR in iosevka/dist/"${VARIANT}"/{TTF,TTF-Unhinted,WOFF2,WOFF2-Unhinted}; do
+    pushd "${DIR}" > /dev/null
+    for FILE in *; do
+      NEWFILE="$(echo "${FILE}" |
+                tr '[:upper:]' '[:lower:]' |
+                sed -e "s/-normal/-/g" -e "s/-\./-regular./g")"
+      mv "${FILE}" "${NEWFILE}"
+    done
+    popd > /dev/null
+  done
+  for DIR in iosevka/dist/"${VARIANT}"/{TTF-Nerd,TTF-Unhinted-Nerd}; do
     pushd "${DIR}" > /dev/null
     for FILE in *Nerd*; do
       NEWFILE="$(echo "${FILE}" |
@@ -70,8 +80,8 @@ rename_nerd_ttf() {
 
 ROOT="$(readlink -f "$(dirname "${0}")")"
 DEST="${ROOT}"/dest
-IOSEVKA=v27.3.5
-NERDFONT=v3.0.2
+IOSEVKA=v28.0.0-alpha.2
+NERDFONT=v3.1.0
 # IOSEVKA=HEAD
 # NERDFONT=latest
 BUILD=$(mktemp -d)
@@ -83,7 +93,7 @@ pushd "${BUILD}" > /dev/null
 
 build_iosevka
 patch_nerd_fonts
-rename_nerd_ttf
+rename_ttf
 
 # Move final files to "${DEST}" directory.
 mv iosevka/dist/"${VARIANT}" "${DEST}"

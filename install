@@ -62,4 +62,4 @@ while [ ${#} -ge 1 ]; do
   esac
 done
 
-install_variant ttf"${UNHINTED:+-unhinted}${NERD:+-nerd}"
+install_variant TTF"${UNHINTED:+-Unhinted}${NERD:+-Nerd}"
