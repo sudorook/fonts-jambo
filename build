@@ -22,6 +22,11 @@ build_iosevka() {
 
 # Apply Nerd Fonts patches to TTF files to create *-nerd veriants.
 patch_nerd_fonts() {
+  local n
+  local i
+  local dir
+  local font
+
   mkdir -p font-patcher
   pushd font-patcher > /dev/null
   if [[ "${NERDFONT}" = "latest" ]]; then
@@ -30,16 +35,16 @@ patch_nerd_fonts() {
     wget https://github.com/ryanoasis/nerd-fonts/releases/download/"${NERDFONT}"/FontPatcher.zip
   fi
   unzip FontPatcher.zip
-  N="$(nproc)"
-  I=0
-  for DIR in ../iosevka/dist/"${VARIANT}"/{TTF,TTF-Unhinted}; do
-    mkdir -p "${DIR}-Nerd"
-    for FONT in "${DIR}"/*.ttf; do
-      show_info "Patching ${FONT@Q}..."
-      fontforge -script font-patcher "${FONT}" -out "${DIR}-Nerd" --careful -c -l -q > /dev/null 2>&1 &
-      I=$((I + 1))
-      if [ $((I % N)) -eq 0 ]; then
-        I=0
+  n="$(nproc)"
+  i=0
+  for dir in ../iosevka/dist/"${VARIANT}"/{TTF,TTF-Unhinted}; do
+    mkdir -p "${dir}-Nerd"
+    for font in "${dir}"/*.ttf; do
+      show_info "Patching ${font@Q}..."
+      fontforge -script font-patcher "${font}" -out "${dir}-Nerd" --careful -c -l -q > /dev/null 2>&1 &
+      i=$((i + 1))
+      if [ $((i % n)) -eq 0 ]; then
+        i=0
         wait
       fi
     done
@@ -50,30 +55,34 @@ patch_nerd_fonts() {
 
 # Re-arrange and rename files.
 rename_ttf() {
-  for DIR in iosevka/dist/"${VARIANT}"/{TTF,TTF-Unhinted,WOFF2,WOFF2-Unhinted}; do
-    pushd "${DIR}" > /dev/null
-    for FILE in *; do
-      NEWFILE="$(echo "${FILE}" |
+  local dir
+  local file
+  local newfile
+
+  for dir in iosevka/dist/"${VARIANT}"/{TTF,TTF-Unhinted,WOFF2,WOFF2-Unhinted}; do
+    pushd "${dir}" > /dev/null
+    for file in *; do
+      newfile="$(echo "${file}" |
                 tr '[:upper:]' '[:lower:]' |
                 sed -e "s/-normal/-/g" -e "s/-\./-regular./g")"
-      if [ -n "${NEWFILE}" ]; then
-        mv "${FILE}" "${NEWFILE}"
+      if [ -n "${newfile}" ]; then
+        mv "${file}" "${newfile}"
       fi
     done
     popd > /dev/null
   done
-  for DIR in iosevka/dist/"${VARIANT}"/{TTF-Nerd,TTF-Unhinted-Nerd}; do
-    pushd "${DIR}" > /dev/null
-    for FILE in *Nerd*; do
-      NEWFILE="$(echo "${FILE}" |
+  for dir in iosevka/dist/"${VARIANT}"/{TTF-Nerd,TTF-Unhinted-Nerd}; do
+    pushd "${dir}" > /dev/null
+    for file in *Nerd*; do
+      newfile="$(echo "${file}" |
                 tr '[:upper:]' '[:lower:]' |
                 sed -e "s/jambo mono/jambo-mono-nerd/g" \
                     -e "s/\ nerd font complete//g" \
                     -e "s/nerd /nerd-/g" \
                     -e "s/jambomononerdfont/jambo-mono-nerd/g" \
                     -e "s/ //g")"
-      if [ -n "${NEWFILE}" ]; then
-        mv "${FILE}" "${NEWFILE}"
+      if [ -n "${newfile}" ]; then
+        mv "${file}" "${newfile}"
       fi
     done
     popd > /dev/null
