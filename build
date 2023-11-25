@@ -108,7 +108,7 @@ NERDFONT=v3.1.0
 BUILD=$(mktemp -d)
 VARIANT=jambo-mono # alternative: jambo-mono-tall
 
-trap 'rm -rf "${BUILD}"; exit' EXIT INT TERM
+trap 'rm -rf "${BUILD}"; exit' EXIT INT TERM ERR
 
 pushd "${BUILD}" > /dev/null
 
