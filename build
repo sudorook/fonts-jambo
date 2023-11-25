@@ -58,10 +58,12 @@ copy_rename_files() {
   local dir
   local file
   local newfile
+  local destdir
 
   for dir in iosevka/dist/"${VARIANT}"/{TTF,TTF-Unhinted,WOFF2,WOFF2-Unhinted}; do
     pushd "${dir}" > /dev/null
-    mkdir -p "${DEST}/${dir,,}"
+    destdir="${DEST}/${VARIANT}/$(basename "${dir,,}")"
+    mkdir -p "${destdir}"
     for file in *; do
       newfile="$(echo "${file}" |
                 tr '[:upper:]' '[:lower:]' |
@@ -69,16 +71,17 @@ copy_rename_files() {
                     -e "s/-\././g" \
                     -e "s/^${VARIANT}\./${VARIANT}-regular./g")"
       if [ -n "${newfile}" ]; then
-        cp -v "${file}" "${DEST}/${dir,,}/${newfile}"
+        cp -v "${file}" "${destdir}/${newfile}"
       else
-        cp -v "${file}" "${DEST}/${dir,,}/${file}"
+        cp -v "${file}" "${destdir}/${file}"
       fi
     done
     popd > /dev/null
   done
   for dir in iosevka/dist/"${VARIANT}"/{TTF-Nerd,TTF-Unhinted-Nerd}; do
     pushd "${dir}" > /dev/null
-    mkdir -p "${DEST}/${dir,,}"
+    destdir="${DEST}/${VARIANT}/$(basename "${dir,,}")"
+    mkdir -p "${destdir}"
     for file in *Nerd*; do
       newfile="$(echo "${file}" |
                 tr '[:upper:]' '[:lower:]' |
@@ -88,9 +91,9 @@ copy_rename_files() {
                     -e "s/jambomononerdfont/jambo-mono-nerd/g" \
                     -e "s/ //g")"
       if [ -n "${newfile}" ]; then
-        cp -v "${file}" "${DEST}/${dir,,}/${newfile}"
+        cp -v "${file}" "${destdir}/${newfile}"
       else
-        cp -v "${file}" "${DEST}/${dir,,}/${file}"
+        cp -v "${file}" "${destdir}/${file}"
       fi
     done
     popd > /dev/null
