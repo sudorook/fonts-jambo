@@ -45,6 +45,7 @@ function build_update {
 function commit_changes {
   local cur_tag
   local new_tag
+  local msg=
 
   pushd "${ROOT}" > /dev/null
 
@@ -59,7 +60,6 @@ function commit_changes {
   mv "${DEST}/jambo-mono" fonts
   rmdir "${DEST}"
 
-  local msg=
   if ! [ "${IOSEVKA_CURRENT}" = "${IOSEVKA_LATEST}" ]; then
     msg="${msg:-} iosevka ${IOSEVKA_LATEST},"
   fi
