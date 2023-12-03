@@ -43,7 +43,13 @@ function build_update {
 
 # Put files in place and commit changes.
 function commit_changes {
+  local cur_tag
+  local new_tag
+
   pushd "${ROOT}" > /dev/null
+
+  cur_tag="$(git describe --tags --abbrev=0)"
+  new_tag="${cur_tag%.*}.$((${cur_tag##*.} + 1))" # bump patch version by 1
 
   if [[ "$(git log -1 --pretty=%B)" = "compile and commit fonts" ]]; then
     git reset HEAD~1
@@ -62,7 +68,7 @@ function commit_changes {
   fi
   git add README.md build
   git commit -m "update:${msg::-1}"
-
+  git tag "${new_tag}"
   git add fonts
   git commit -m "compile and commit fonts"
 
