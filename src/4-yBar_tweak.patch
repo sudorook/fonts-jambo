@@ -1,7 +1,7 @@
-diff --git a/font-src/glyphs/number/4.ptl b/font-src/glyphs/number/4.ptl
-index 60cfbff..18e50cd 100644
---- a/font-src/glyphs/number/4.ptl
-+++ b/font-src/glyphs/number/4.ptl
+diff --git a/packages/font-glyphs/src/number/4.ptl b/packages/font-glyphs/src/number/4.ptl
+index 2c6b4fe..9e1f216 100644
+--- a/packages/font-glyphs/src/number/4.ptl
++++ b/packages/font-glyphs/src/number/4.ptl
 @@ -10,7 +10,7 @@ glyph-block Digits-Four : begin
  	glyph-block-import Digits-Shared : OnumMarks ShiftDown CodeLnum CodeOnum
  
