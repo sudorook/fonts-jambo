@@ -56,7 +56,9 @@ function commit_changes {
     git reset HEAD~1
   fi
 
-  mv fonts "fonts-$(date +%Y%m%d-%H%M%S)"
+  if [ -d fonts ]; then
+    mv fonts "fonts-$(date +%Y%m%d-%H%M%S)"
+  fi
   mv "${DEST}/jambo-mono" fonts
   rmdir "${DEST}"
 
