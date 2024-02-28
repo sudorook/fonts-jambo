@@ -26,8 +26,8 @@ function install_variant {
 function print_usage {
   show_header "Usage:"
   cat << EOF
-  -u|--unhinted     install unhinted fils (default:false)
-  -n|--nerd         install nerd-patched fils (default:false)
+  -u|--unhinted     install unhinted files (default:false)
+  -n|--nerd         install nerd-patched files (default:false)
   -h|--help         print (this) message
 EOF
 }
