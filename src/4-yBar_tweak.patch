@@ -1,11 +1,11 @@
 diff --git a/packages/font-glyphs/src/number/4.ptl b/packages/font-glyphs/src/number/4.ptl
-index 2c6b4fe..9e1f216 100644
+index eaa560e..3876dc2 100644
 --- a/packages/font-glyphs/src/number/4.ptl
 +++ b/packages/font-glyphs/src/number/4.ptl
-@@ -10,7 +10,7 @@ glyph-block Digits-Four : begin
+@@ -11,7 +11,7 @@ glyph-block Digits-Four : begin
  	glyph-block-import Digits-Shared : OnumMarks ShiftDown CodeLnum CodeOnum
  
- 	define [FourStdShape] : with-params [top open crossing [fine : AdviceStroke 3] [sw Stroke] [bbd 0]] : glyph-proc
+ 	define [FourStdShape] : with-params [top open crossing [fine : AdviceStroke 3] [sw Stroke] [bbd 0] [slab SLAB]] : glyph-proc
 -		local yBar : top * 0.3 + 0.625 * sw
 +		local yBar : top * 0.3333 + 0.625 * sw
  
