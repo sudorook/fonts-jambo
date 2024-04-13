@@ -104,8 +104,8 @@ copy_rename_files() {
 
 ROOT="$(readlink -f "$(dirname "${0}")")"
 DEST="${ROOT}"/dest
-IOSEVKA=v29.1.0
-NERDFONT=v3.2.0
+IOSEVKA=v29.2.0
+NERDFONT=v3.2.1
 # IOSEVKA=HEAD
 # NERDFONT=latest
 BUILD=$(mktemp -d)
