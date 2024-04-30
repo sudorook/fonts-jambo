@@ -80,6 +80,18 @@ function commit_changes {
   mv "${DEST}/jambo-mono" fonts
   rmdir "${DEST}"
 
+  # Set SPDX license identifiers.
+  local spdx_string
+  spdx_string=$(
+    cat << EOF
+SPDX-FileCopyrightText: $(date "+%Y") $(git config user.name) <$(git config user.email)>
+
+SPDX-License-Identifier: OFL-1.1
+EOF
+  )
+  find fonts/ -type f -print0 |
+    xargs -0 -P "$(nproc)" -I _ bash -c "echo '${spdx_string}' > _.license"
+
   if ! [ "${IOSEVKA_CURRENT}" = "${IOSEVKA_LATEST}" ]; then
     msg="${msg:-} iosevka ${IOSEVKA_LATEST},"
   fi
