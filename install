@@ -33,8 +33,8 @@ function install_variant {
     dest="${HOME}/.local/share/fonts/jambo"
   fi
   if [ -d "${variant_dir}/" ]; then
-    mkdir -p "${dest}"
-    cp -Ra "${variant_dir}/" "${dest}"
+    mkdir -p "${dest}/${1}"
+    cp -ar "${variant_dir}"/*.ttf -t "${dest}/${1}/"
   else
     show_error "Font ${variant@Q} not found. Have fonts been compiled?"
     exit 3
