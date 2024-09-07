@@ -122,7 +122,7 @@ copy_rename_files() {
 
 ROOT="$(readlink -f "$(dirname "${0}")")"
 DEST="${ROOT}"/dest
-IOSEVKA=v31.4.0
+IOSEVKA=v31.5.0
 NERDFONT=v3.2.1
 # IOSEVKA=HEAD
 # NERDFONT=latest
