@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SPDX-FileCopyrightText: 2023 - 2024 sudorook <daemon@nullcodon.com>
+# SPDX-FileCopyrightText: 2023 - 2025 sudorook <daemon@nullcodon.com>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
@@ -122,7 +122,7 @@ copy_rename_files() {
 
 ROOT="$(readlink -f "$(dirname "${0}")")"
 DEST="${ROOT}"/dest
-IOSEVKA=v32.4.0
+IOSEVKA=v32.5.0
 NERDFONT=v3.3.0
 # IOSEVKA=HEAD
 # NERDFONT=latest
