@@ -26,6 +26,7 @@ relic/
 *.cab
 *.xar
 *.zst
+*.tzst
 
 # Packing-only formats
 *.iso
