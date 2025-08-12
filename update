@@ -111,8 +111,6 @@ EOF
 # Globals
 #
 
-! check_command git podman && exit 3
-
 ROOT="$(readlink -f "$(dirname "${0}")")"
 DEST=dest
 
