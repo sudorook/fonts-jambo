@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # SPDX-FileCopyrightText: 2023 - 2025 sudorook <daemon@nullcodon.com>
 #
@@ -34,7 +34,7 @@ build_iosevka() {
   cp "${ROOT}"/src/jambo-mono_complete.toml private-build-plans.toml
   git apply "${ROOT}"/src/4-yBar_tweak.patch
   npm install
-  npm run build -- contents::"${VARIANT}"
+  npm run build -- --jCmd=8 contents::"${VARIANT}"
   popd > /dev/null
 }
 
@@ -122,7 +122,7 @@ copy_rename_files() {
 
 ROOT="$(readlink -f "$(dirname "${0}")")"
 DEST="${ROOT}"/dest
-IOSEVKA=v34.2.0
+IOSEVKA=v34.2.1
 NERDFONT=v3.4.0
 # IOSEVKA=HEAD
 # NERDFONT=latest
