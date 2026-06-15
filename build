@@ -32,7 +32,7 @@ build_iosevka() {
   fi
   pushd iosevka > /dev/null
   cp "${ROOT}"/src/jambo-mono_complete.toml private-build-plans.toml
-  # git apply "${ROOT}"/src/4-yBar_tweak.patch
+  git apply "${ROOT}"/src/4-yBar_tweak.patch
   npm install
   npm run build -- --jCmd=8 contents::"${VARIANT}"
   popd > /dev/null
