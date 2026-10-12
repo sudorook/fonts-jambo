@@ -34,7 +34,7 @@ build_iosevka() {
   cp "${ROOT}"/src/jambo-mono_complete.toml private-build-plans.toml
   git apply "${ROOT}"/src/4-yBar_tweak.patch
   npm install
-  npm run build -- --jCmd=8 contents::"${VARIANT}"
+  npm run build -- --jCmd="${IOSEVKA_JOBS:-8}" contents::"${VARIANT}"
   popd > /dev/null
 }
 
@@ -84,10 +84,10 @@ copy_rename_files() {
     mkdir -p "${destdir}"
     for file in *; do
       newfile="$(echo "${file}" |
-                tr '[:upper:]' '[:lower:]' |
-                sed -e "s/-normal/-/g" \
-                    -e "s/-\././g" \
-                    -e "s/^${VARIANT}\./${VARIANT}-regular./g")"
+        tr '[:upper:]' '[:lower:]' |
+        sed -e "s/-normal/-/g" \
+          -e "s/-\././g" \
+          -e "s/^${VARIANT}\./${VARIANT}-regular./g")"
       if [ -n "${newfile}" ]; then
         cp -v "${file}" "${destdir}/${newfile}"
       else
@@ -102,12 +102,12 @@ copy_rename_files() {
     mkdir -p "${destdir}"
     for file in *Nerd*; do
       newfile="$(echo "${file}" |
-                tr '[:upper:]' '[:lower:]' |
-                sed -e "s/jambo mono/jambo-mono-nerd/g" \
-                    -e "s/\ nerd font complete//g" \
-                    -e "s/nerd /nerd-/g" \
-                    -e "s/jambomononerdfont/jambo-mono-nerd/g" \
-                    -e "s/ //g")"
+        tr '[:upper:]' '[:lower:]' |
+        sed -e "s/jambo mono/jambo-mono-nerd/g" \
+          -e "s/\ nerd font complete//g" \
+          -e "s/nerd /nerd-/g" \
+          -e "s/jambomononerdfont/jambo-mono-nerd/g" \
+          -e "s/ //g")"
       if [ -n "${newfile}" ]; then
         cp -v "${file}" "${destdir}/${newfile}"
       else
@@ -126,10 +126,20 @@ IOSEVKA=v34.8.1
 NERDFONT=v3.5.1
 # IOSEVKA=HEAD
 # NERDFONT=latest
-BUILD=$(mktemp -d)
-VARIANT=jambo-mono # alternative: jambo-mono-tall
+# Allow override via environment (for CI or manual builds)
+VARIANT="${VARIANT:-jambo-mono}" # alternative: jambo-mono-tall
 
-trap 'rm -rf "${BUILD}"; exit' EXIT INT TERM ERR
+if [ -n "${BUILD_DIR:-}" ]; then
+  BUILD="${BUILD_DIR}"
+  mkdir -p "${BUILD}"
+else
+  BUILD=$(mktemp -d)
+fi
+
+# Only clean up temp dir when not running in CI
+if [ -z "${CI:-}" ]; then
+  trap 'rm -rf "${BUILD}"; exit' EXIT INT TERM ERR
+fi
 
 pushd "${BUILD}" > /dev/null
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# SPDX-FileCopyrightText: 2023 - 2024 sudorook <daemon@nullcodon.com>
+# SPDX-FileCopyrightText: 2023 - 2025 sudorook <daemon@nullcodon.com>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
@@ -23,120 +23,25 @@ ROOT="$(dirname "${0}")"
 
 source "${ROOT}"/globals
 
-#
-# Utility functions
-#
+IOSEVKA_CURRENT="$(sed -n 's/^IOSEVKA=\(.*\)/\1/p' "${ROOT}"/build)"
+NERDFONT_CURRENT="$(sed -n 's/^NERDFONT=\(.*\)/\1/p' "${ROOT}"/build)"
 
-! check_command git podman sed && exit 3
+IOSEVKA_LATEST="$(git ls-remote --sort='version:refname' --tags https://github.com/be5invis/Iosevka.git 2> /dev/null | tail -n1 | cut -d/ -f3)"
+NERDFONT_LATEST="$(git ls-remote --sort='version:refname' --tags https://github.com/ryanoasis/nerd-fonts.git 2> /dev/null | tail -n1 | cut -d/ -f3)"
 
-#
-# Functions
-#
+show_header "Jambo Mono — version check"
+echo "  Iosevka:    ${IOSEVKA_CURRENT}  (latest: ${IOSEVKA_LATEST:-unknown})"
+echo "  Nerd Fonts: ${NERDFONT_CURRENT}  (latest: ${NERDFONT_LATEST:-unknown})"
+echo ""
 
-function get_latest_tag {
-  git ls-remote --sort='version:refname' --tags "${1}" |
-    tail -n 1 |
-    cut -d"	" -f2 |
-    cut -d "/" -f3
-}
-
-function build_update {
-  # Update README and build script.
-  sed -i \
-    -e "s/^IOSEVKA=${IOSEVKA_CURRENT}/IOSEVKA=${IOSEVKA_LATEST}/g" \
-    -e "s/^NERDFONT=${NERDFONT_CURRENT}/NERDFONT=${NERDFONT_LATEST}/g" \
-    "${ROOT}"/build
-  sed -i \
-    -e "s/Iosevka ${IOSEVKA_CURRENT#v}/Iosevka ${IOSEVKA_LATEST#v}/g" \
-    -e "s/Nerd Fonts ${NERDFONT_CURRENT#v}/Nerd Fonts ${NERDFONT_LATEST#v}/g" \
-    "${ROOT}"/README.md
-
-  # Download/compile requisite podman images.
-  podman build -t jambo-build "${ROOT}"
-
-  # Run build script.
-  mkdir -p "${ROOT}/${DEST}"
-  podman run -it --rm --network host -v "${ROOT}/${DEST}:/home/${DEST}:Z" localhost/jambo-build:latest
-}
-
-# Put files in place and commit changes.
-function commit_changes {
-  local cur_tag
-  local new_tag
-  local msg=
-
-  pushd "${ROOT}" > /dev/null
-
-  cur_tag="$(git describe --tags --abbrev=0)"
-  new_tag="${cur_tag%.*}.$((${cur_tag##*.} + 1))" # bump patch version by 1
-
-  if [[ "$(git log -1 --pretty=%B)" = "compile and commit fonts" ]]; then
-    git reset HEAD~1
-  fi
-
-  if [ -d fonts ]; then
-    mv fonts "fonts-$(date +%Y%m%d-%H%M%S)"
-  fi
-  mv "${DEST}/jambo-mono" fonts
-  rmdir "${DEST}"
-
-  # Set SPDX license identifiers.
-  local spdx_string
-  spdx_string=$(
-    cat << EOF
-SPDX-FileCopyrightText: $(date "+%Y") $(git config user.name) <$(git config user.email)>
-
-SPDX-License-Identifier: OFL-1.1
-EOF
-  )
-  find fonts/ -type f -print0 |
-    xargs -0 -P "$(nproc)" -I _ bash -c "echo '${spdx_string}' > _.license"
-
-  if ! [ "${IOSEVKA_CURRENT}" = "${IOSEVKA_LATEST}" ]; then
-    msg="${msg:-} iosevka ${IOSEVKA_LATEST},"
-  fi
-  if ! [ "${NERDFONT_CURRENT}" = "${NERDFONT_LATEST}" ]; then
-    msg="${msg:-} nerd-fonts ${NERDFONT_LATEST},"
-  fi
-  git add README.md build
-  git commit -m "update:${msg::-1}"
-  git tag "${new_tag}"
-  git add fonts
-  git commit -m "compile and commit fonts"
-
-  popd > /dev/null
-}
-
-#
-# Globals
-#
-
-ROOT="$(readlink -f "$(dirname "${0}")")"
-DEST=dest
-
-# Get release versions for iosevka and nerd-fonts.
-IOSEVKA_LATEST="$(get_latest_tag https://github.com/be5invis/Iosevka.git)"
-NERDFONT_LATEST="$(get_latest_tag https://github.com/ryanoasis/nerd-fonts.git)"
-
-IOSEVKA_CURRENT="$(sed -n "s/^IOSEVKA=\(.*\)/\1/p" "${ROOT}"/build)"
-NERDFONT_CURRENT="$(sed -n "s/^NERDFONT=\(.*\)/\1/p" "${ROOT}"/build)"
-
-# Check whether remote and local latest tags match. If no, exit. If yes, prompt
-# for rebuilding font files.
-if [ "${IOSEVKA_CURRENT}" = "${IOSEVKA_LATEST}" ] &&
-   [ "${NERDFONT_CURRENT}" = "${NERDFONT_LATEST}" ]; then
-  show_success "No updates found."
-  exit
+if [ "${IOSEVKA_CURRENT}" = "${IOSEVKA_LATEST}" ] && [ "${NERDFONT_CURRENT}" = "${NERDFONT_LATEST}" ]; then
+  show_success "No updates available."
 else
-  if ! [ "${IOSEVKA_CURRENT}" = "${IOSEVKA_LATEST}" ]; then
-    show_info "Iosevka: ${IOSEVKA_CURRENT} -> ${IOSEVKA_LATEST}"
-  fi
-  if ! [ "${NERDFONT_CURRENT}" = "${NERDFONT_LATEST}" ]; then
-    show_info "Nerd Fonts: ${NERDFONT_CURRENT} -> ${NERDFONT_LATEST}"
-  fi
-  REPLY="$(ask_question "Updates found. Rebuild fonts? (y/N)")"
-  if [[ "${REPLY}" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-    build_update
-    commit_changes
-  fi
+  show_warning "Updates available!"
+  echo ""
+  echo "Font builds are now handled by GitHub Actions."
+  echo "Run the workflow manually at:"
+  echo "  https://github.com/sudorook/fonts-jambo/actions/workflows/ci.yml"
+  echo ""
+  echo "A weekly scheduled run also checks for and builds updates automatically."
 fi

@@ -23,9 +23,87 @@ ROOT="$(dirname "${0}")"
 
 source "${ROOT}"/globals
 
+function download_from_release {
+  local variant="${1}"
+  local tag="${2:-latest}"
+  local asset
+  local url
+  local tmpdir
+
+  if ! command -v curl > /dev/null && ! command -v wget > /dev/null; then
+    show_error "curl or wget is required to download fonts."
+    exit 3
+  fi
+  if ! command -v unzip > /dev/null; then
+    show_error "unzip is required to extract the downloaded fonts."
+    exit 3
+  fi
+
+  if [ "${tag}" = "latest" ]; then
+    show_info "Fetching latest release tag..."
+    if command -v curl > /dev/null; then
+      tag=$(curl -sL "https://api.github.com/repos/sudorook/fonts-jambo/releases/latest" | grep '"tag_name"' | cut -d'"' -f4)
+    else
+      tag=$(wget -qO- "https://api.github.com/repos/sudorook/fonts-jambo/releases/latest" | grep '"tag_name"' | cut -d'"' -f4)
+    fi
+    if [ -z "${tag}" ]; then
+      show_error "Could not determine latest release tag."
+      exit 3
+    fi
+    show_info "Latest release: ${tag}"
+  fi
+
+  if [[ "${variant}" == *nerd* ]]; then
+    asset="jambo-mono-ttf-nerd-${tag}.zip"
+  elif [[ "${variant}" == *woff* ]]; then
+    asset="jambo-mono-woff2-${tag}.zip"
+  else
+    asset="jambo-mono-ttf-${tag}.zip"
+  fi
+  url="https://github.com/sudorook/fonts-jambo/releases/download/${tag}/${asset}"
+  tmpdir=$(mktemp -d)
+
+  show_info "Downloading ${variant} from ${tag}..."
+  if command -v curl > /dev/null; then
+    curl -sL -o "${tmpdir}/fonts.zip" "${url}" || {
+      show_error "Failed to download ${url}"
+      rm -rf "${tmpdir}"
+      exit 3
+    }
+  else
+    wget -q -O "${tmpdir}/fonts.zip" "${url}" || {
+      show_error "Failed to download ${url}"
+      rm -rf "${tmpdir}"
+      exit 3
+    }
+  fi
+
+  unzip -qo "${tmpdir}/fonts.zip" -d "${tmpdir}/fonts"
+
+  local dest
+  if [ "${EUID}" -eq 0 ]; then
+    dest=/usr/local/share/fonts/jambo
+  else
+    dest="${HOME}/.local/share/fonts/jambo"
+  fi
+
+  mkdir -p "${dest}/${variant}"
+  cp -a "${tmpdir}/fonts/${variant}/"* -t "${dest}/${variant}/" 2> /dev/null || {
+    # Fallback: files might be directly in the zip root
+    cp -a "${tmpdir}/fonts/"* -t "${dest}/${variant}/" 2> /dev/null || {
+      show_error "No files found in downloaded archive."
+      rm -rf "${tmpdir}"
+      exit 3
+    }
+  }
+
+  rm -rf "${tmpdir}"
+  show_success "Installed ${variant} to ${dest}/${variant}"
+}
+
 function install_variant {
   local variant="${1}"
-  local variant_dir="${ROOT}/fonts/${1}"
+  local variant_dir="${2:-${ROOT}/fonts/${1}}"
   local dest
   if [ "${EUID}" -eq 0 ]; then
     dest=/usr/local/share/fonts/jambo
@@ -46,12 +124,14 @@ function print_usage {
   cat << EOF
   -u|--unhinted     install unhinted files (default:false)
   -n|--nerd         install nerd-patched files (default:false)
+  -d|--download     download from GitHub Releases instead of using local fonts/
+  -t|--tag TAG      specify release tag (default: latest)
   -h|--help         print (this) message
 EOF
 }
 
-OPTIONS=hnu
-LONGOPTIONS=help,nerd,unhinted
+OPTIONS=dhnut:
+LONGOPTIONS=download,help,nerd,unhinted,tag:
 PARSED=$(getopt -o ${OPTIONS} --long ${LONGOPTIONS} -n "${0}" -- "${@}")
 eval set -- "${PARSED}"
 
@@ -64,6 +144,14 @@ while [ ${#} -ge 1 ]; do
     -n | --nerd)
       NERD=true
       shift
+      ;;
+    -d | --download)
+      DOWNLOAD=true
+      shift
+      ;;
+    -t | --tag)
+      TAG="${2}"
+      shift 2
       ;;
     -h | --help)
       print_usage
@@ -80,4 +168,22 @@ while [ ${#} -ge 1 ]; do
   esac
 done
 
-install_variant ttf"${UNHINTED:+-unhinted}${NERD:+-nerd}"
+VARIANT="ttf${UNHINTED:+-unhinted}${NERD:+-nerd}"
+
+# Prefer local builds: fonts/ (historical layout) or dest/jambo-mono/ (output of
+# ./build). Download from GitHub Releases only when neither exists or -d is set.
+SRC_DIR=""
+if [ -d "${ROOT}/fonts/${VARIANT}" ]; then
+  SRC_DIR="${ROOT}/fonts/${VARIANT}"
+elif [ -d "${ROOT}/dest/jambo-mono/${VARIANT}" ]; then
+  SRC_DIR="${ROOT}/dest/jambo-mono/${VARIANT}"
+fi
+
+if [ "${DOWNLOAD:-false}" = "true" ] || [ -z "${SRC_DIR}" ]; then
+  if [ -z "${SRC_DIR}" ] && [ "${DOWNLOAD:-false}" != "true" ]; then
+    show_warning "Local fonts/ not found. Downloading from GitHub Releases..."
+  fi
+  download_from_release "${VARIANT}" "${TAG:-latest}"
+else
+  install_variant "${VARIANT}" "${SRC_DIR}"
+fi

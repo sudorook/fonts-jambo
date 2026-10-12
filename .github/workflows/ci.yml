@@ -1,0 +1,209 @@
+# SPDX-FileCopyrightText: 2026 sudorook <daemon@nullcodon.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Build Jambo Mono, package the variants as zip archives, and publish them to
+# the GitHub Releases page.
+#
+# A manually pushed version tag (e.g. v2.3.106) triggers a build directly. The
+# weekly scheduled run checks upstream Iosevka/Nerd Fonts; if either has a new
+# release it bumps the pinned versions, tags the next patch release, and builds
+# it in the same run. (Tags pushed with GITHUB_TOKEN do not trigger a separate
+# workflow run, hence the check and build jobs live in this single workflow.)
+
+name: build
+
+on:
+  schedule:
+    # Weekly, off the hour to avoid GitHub's high-load start-of-hour window.
+    - cron: "23 4 * * 1"
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  # Stage 1: check for upstream Iosevka/Nerd Fonts updates. Runs on schedule or
+  # manual dispatch from master only (a tag push, or a dispatch on a tag, just
+  # rebuilds that tag).
+  check-updates:
+    if: github.event_name != 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    outputs:
+      updated: ${{ steps.check.outputs.updated }}
+      tag: ${{ steps.check.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for upstream updates
+        id: check
+        run: |
+          set -euo pipefail
+
+          IOSEVKA_CURRENT=$(sed -n 's/^IOSEVKA=\(.*\)/\1/p' build)
+          NERDFONT_CURRENT=$(sed -n 's/^NERDFONT=\(.*\)/\1/p' build)
+
+          IOSEVKA_LATEST=$(git ls-remote --sort='version:refname' --tags https://github.com/be5invis/Iosevka.git | tail -n1 | cut -d/ -f3)
+          NERDFONT_LATEST=$(git ls-remote --sort='version:refname' --tags https://github.com/ryanoasis/nerd-fonts.git | tail -n1 | cut -d/ -f3)
+
+          echo "Iosevka:   ${IOSEVKA_CURRENT} -> ${IOSEVKA_LATEST}"
+          echo "NerdFonts: ${NERDFONT_CURRENT} -> ${NERDFONT_LATEST}"
+
+          UPDATES=""
+          if [ "${IOSEVKA_CURRENT}" != "${IOSEVKA_LATEST}" ]; then
+            UPDATES="${UPDATES} iosevka ${IOSEVKA_LATEST},"
+            sed -i "s/^IOSEVKA=${IOSEVKA_CURRENT}/IOSEVKA=${IOSEVKA_LATEST}/" build
+            sed -i "s/Iosevka ${IOSEVKA_CURRENT#v}/Iosevka ${IOSEVKA_LATEST#v}/" README.md
+          fi
+          if [ "${NERDFONT_CURRENT}" != "${NERDFONT_LATEST}" ]; then
+            UPDATES="${UPDATES} nerd-fonts ${NERDFONT_LATEST},"
+            sed -i "s/^NERDFONT=${NERDFONT_CURRENT}/NERDFONT=${NERDFONT_LATEST}/" build
+            sed -i "s/Nerd Fonts ${NERDFONT_CURRENT#v}/Nerd Fonts ${NERDFONT_LATEST#v}/" README.md
+          fi
+
+          if [ -n "${UPDATES}" ]; then
+            CURRENT_TAG=$(git describe --tags --abbrev=0 2> /dev/null || echo "v0.0.0")
+            NEW_TAG="${CURRENT_TAG%.*}.$((${CURRENT_TAG##*.} + 1))"
+
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add build README.md
+            git commit -m "update:${UPDATES%,}"
+            git tag "${NEW_TAG}"
+            git push --atomic origin "HEAD:refs/heads/master" "refs/tags/${NEW_TAG}"
+            echo "Tagged ${NEW_TAG} and pushed."
+            echo "updated=true" >> "${GITHUB_OUTPUT}"
+            echo "tag=${NEW_TAG}" >> "${GITHUB_OUTPUT}"
+          else
+            echo "No updates found."
+            echo "updated=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+  # Stage 2: clone Iosevka and build TTF + WOFF2, patch Nerd Fonts variants.
+  build-fonts:
+    needs: [check-updates]
+    # Skip if the update check failed; on schedule, build only when it found
+    # updates. (check-updates is skipped for tag pushes and tag dispatches.)
+    if: >-
+      !cancelled() && needs.check-updates.result != 'failure' &&
+      (github.event_name != 'schedule' || needs.check-updates.outputs.updated ==
+      'true')
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    env:
+      CI: "1"
+      BUILD_DIR: ${{ github.workspace }}/iosevka-build
+      # Limit parallel Iosevka jobs to fit the runner's memory (16 GB).
+      IOSEVKA_JOBS: "4"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ needs.check-updates.outputs.tag || github.ref }}
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fontforge python3-fontforge ttfautohint unzip wget
+
+      - name: Determine release tag
+        id: tag
+        run: |
+          tag=$(git describe --tags --abbrev=0)
+          echo "Building tag ${tag}"
+          echo "tag=${tag}" >> "${GITHUB_OUTPUT}"
+
+      - name: Build fonts
+        run: ./build
+
+      - name: Upload font artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: jambo-mono-${{ steps.tag.outputs.tag }}-fonts
+          path: dest/
+          if-no-files-found: error
+
+  # Stage 3: package the fonts into three zip archives. The archive names must
+  # match what `install --download` expects: jambo-mono-ttf-<tag>.zip for the
+  # TTF variants, jambo-mono-ttf-nerd-<tag>.zip for the Nerd-patched ones, and
+  # jambo-mono-woff2-<tag>.zip for the web fonts.
+  package-fonts:
+    needs: [build-fonts]
+    # Skip-propagation override: check-updates is skipped on tag pushes, so
+    # build-fonts runs through it; without a status function here this job
+    # would inherit that skip.
+    if: >-
+      !cancelled() &&
+      needs.build-fonts.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download font artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: jambo-mono-${{ needs.build-fonts.outputs.tag }}-fonts
+          path: dest/
+
+      - name: Create zip archives
+        env:
+          TAG: ${{ needs.build-fonts.outputs.tag }}
+        run: |
+          set -euo pipefail
+          cd dest/jambo-mono
+          zip -r "../jambo-mono-ttf-${TAG}.zip" ttf ttf-unhinted
+          zip -r "../jambo-mono-ttf-nerd-${TAG}.zip" ttf-nerd ttf-unhinted-nerd
+          zip -r "../jambo-mono-woff2-${TAG}.zip" woff2 woff2-unhinted
+
+      - name: Upload zip archives
+        uses: actions/upload-artifact@v4
+        with:
+          name: jambo-mono-${{ needs.build-fonts.outputs.tag }}-zips
+          path: dest/jambo-mono-*.zip
+          if-no-files-found: error
+
+  # Stage 4: publish the zip archives on the GitHub Releases page.
+  release:
+    needs: [build-fonts, package-fonts]
+    # Skip-propagation override, as with package-fonts.
+    if: >-
+      !cancelled() &&
+      needs.build-fonts.result == 'success' &&
+      needs.package-fonts.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ needs.build-fonts.outputs.tag }}
+
+      - name: Download zip archives
+        uses: actions/download-artifact@v4
+        with:
+          name: jambo-mono-${{ needs.build-fonts.outputs.tag }}-zips
+          path: dest/
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.build-fonts.outputs.tag }}
+        run: |
+          set -euo pipefail
+          NOTES="Automated build of Jambo Mono fonts.
+
+          **Iosevka:** $(sed -n 's/^IOSEVKA=\(.*\)/\1/p' build)
+          **Nerd Fonts:** $(sed -n 's/^NERDFONT=\(.*\)/\1/p' build)"
+
+          if gh release view "${TAG}" > /dev/null 2>&1; then
+            echo "Release ${TAG} already exists; uploading assets."
+            gh release upload "${TAG}" dest/jambo-mono-*.zip --clobber
+          else
+            gh release create "${TAG}" dest/jambo-mono-*.zip \
+              --title "${TAG}" \
+              --notes "${NOTES}"
+          fi
+          echo "Release complete: https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"
